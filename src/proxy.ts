@@ -51,7 +51,7 @@ export async function proxy(request: NextRequest) {
 
   if (!request.cookies.get(CURRENCY_COOKIE)) {
     // x-vercel-ip-country is populated automatically when deployed on Vercel;
-    // it's absent in local dev, where we fall back to GBP.
+    // it's absent in local dev, where we fall back to NGN.
     const country = request.headers.get("x-vercel-ip-country");
     const currency = country ? detectCurrencyFromCountry(country) : defaultCurrency;
     response.cookies.set(CURRENCY_COOKIE, currency, {

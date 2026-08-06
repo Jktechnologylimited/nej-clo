@@ -31,3 +31,46 @@ export async function getLatestDropCode(): Promise<string | null> {
   const all = await getAllProducts();
   return all[0]?.dropCode ?? null;
 }
+
+export async function getProductById(id: string): Promise<Product | null> {
+  const rows = await sql.query(
+    `SELECT ${PRODUCT_COLUMNS} FROM products WHERE id = $1 LIMIT 1`,
+    [id],
+  );
+  return (rows[0] as Product) ?? null;
+}
+
+export async function updateProduct(
+  id: string,
+  input: {
+    slug: string;
+    name: string;
+    category: string;
+    description: string;
+    colorway: string;
+    sku: string;
+    dropCode: string;
+    priceCents: number;
+    stock: number;
+    status: string;
+    sizes: string;
+  },
+): Promise<Product | null> {
+  await sql`
+    UPDATE products
+    SET
+      slug = ${input.slug},
+      name = ${input.name},
+      category = ${input.category},
+      description = ${input.description},
+      colorway = ${input.colorway},
+      sku = ${input.sku},
+      drop_code = ${input.dropCode},
+      price_cents = ${input.priceCents},
+      stock = ${input.stock},
+      status = ${input.status},
+      sizes = ${input.sizes}
+    WHERE id = ${id}
+  `;
+  return getProductById(id);
+}

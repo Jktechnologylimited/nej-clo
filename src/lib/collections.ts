@@ -18,6 +18,14 @@ export async function getAllCollections(): Promise<Collection[]> {
   return rows as unknown as Collection[];
 }
 
+export async function getCollectionById(id: string): Promise<Collection | null> {
+  const rows = await sql.query(
+    `SELECT ${COLLECTION_COLUMNS} FROM collections WHERE id = $1 LIMIT 1`,
+    [id],
+  );
+  return (rows[0] as Collection) ?? null;
+}
+
 export async function getCollectionBySlug(slug: string): Promise<Collection | null> {
   const rows = await sql.query(
     `SELECT ${COLLECTION_COLUMNS} FROM collections WHERE slug = $1 LIMIT 1`,
@@ -74,6 +82,35 @@ export async function createCollection(input: {
     ),
   ];
   await sql.transaction(queries);
+
+  const rows = await sql.query(
+    `SELECT ${COLLECTION_COLUMNS} FROM collections WHERE id = $1`,
+    [id],
+  );
+  return rows[0] as Collection;
+}
+
+export async function updateCollection(
+  id: string,
+  input: { name: string; description: string; slug: string; productIds: string[] },
+): Promise<Collection> {
+  await sql`
+    UPDATE collections
+    SET name = ${input.name}, description = ${input.description}, slug = ${input.slug}
+    WHERE id = ${id}
+  `;
+
+  // Simplest correct way to sync a many-to-many set: clear it and re-insert,
+  // rather than diffing old vs new.
+  await sql`DELETE FROM product_collections WHERE collection_id = ${id}`;
+  if (input.productIds.length > 0) {
+    const queries = input.productIds.map(
+      (productId) =>
+        sql`INSERT INTO product_collections (product_id, collection_id)
+            VALUES (${productId}, ${id})`,
+    );
+    await sql.transaction(queries);
+  }
 
   const rows = await sql.query(
     `SELECT ${COLLECTION_COLUMNS} FROM collections WHERE id = $1`,

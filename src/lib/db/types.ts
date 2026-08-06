@@ -57,6 +57,7 @@ export type Order = {
   country: string;
   status: string;
   totalCents: number;
+  paymentReference: string | null;
   createdAt: string;
 };
 

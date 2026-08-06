@@ -5,6 +5,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CartProvider } from "@/components/CartProvider";
 import { I18nProvider } from "@/components/I18nProvider";
+import { JoinPopup } from "@/components/JoinPopup";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getCurrency } from "@/lib/i18n/get-currency";
 
@@ -50,6 +51,7 @@ export default async function RootLayout({
             <Header />
             <main className="flex-1">{children}</main>
             <Footer />
+            <JoinPopup />
           </CartProvider>
         </I18nProvider>
       </body>

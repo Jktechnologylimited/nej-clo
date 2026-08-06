@@ -5,7 +5,8 @@ const ORDER_COLUMNS = `
   id, order_number AS "orderNumber", user_id AS "userId", email, name,
   address_line1 AS "addressLine1", address_line2 AS "addressLine2",
   city, postal_code AS "postalCode", country, status,
-  total_cents AS "totalCents", created_at AS "createdAt"
+  total_cents AS "totalCents", payment_reference AS "paymentReference",
+  created_at AS "createdAt"
 `;
 
 const ORDER_ITEM_COLUMNS = `
@@ -36,4 +37,18 @@ export async function getOrdersForUser(userId: string): Promise<Order[]> {
     [userId],
   );
   return rows as unknown as Order[];
+}
+
+export async function markOrderPaid(orderNumber: string, paymentReference: string): Promise<void> {
+  await sql`
+    UPDATE orders
+    SET status = 'paid', payment_reference = ${paymentReference}
+    WHERE order_number = ${orderNumber}
+  `;
+}
+
+export async function markOrderFailed(orderNumber: string): Promise<void> {
+  await sql`
+    UPDATE orders SET status = 'failed' WHERE order_number = ${orderNumber}
+  `;
 }

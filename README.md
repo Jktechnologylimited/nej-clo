@@ -9,10 +9,12 @@ Full-stack storefront for an independent streetwear label. Built with Next.js 16
 - **Next.js 16** — App Router, Turbopack, async request APIs, `proxy.ts` route protection
 - **Neon** (serverless Postgres) via `@neondatabase/serverless` directly — **no ORM**. Queries are plain parameterized SQL (`sql\`SELECT ... WHERE id = ${id}\``), see [Database](#database) below
 - **Resend** — welcome email on signup, order confirmation on checkout (both fail silently if no API key is set, so the app runs without it)
+- **Paystack** — optional checkout payment, split to a subaccount if configured. Falls back to "log the order, no charge" if no Paystack keys are set — see [Payments](#payments) below
 - **Custom auth** — bcrypt password hashing + signed JWT session cookie (`jose`), role-based (`customer` / `admin`), no external auth service
 - **Tailwind CSS v4** — design tokens defined in `src/app/globals.css`
 - **i18n** — English / French / Spanish, auto-detected from the browser's `Accept-Language` header, switchable in the header/footer, persisted in a cookie
 - **Currency** — 7 currencies with approximate GBP-based conversion for display, auto-detected by country (via Vercel's geo header) or browser language, switchable — see [Currency](#currency-notes) below
+- **Admin panel** (`/admin`, requires `role="admin"`) — create/edit/delete collections, edit key site copy (hero, manifesto, footer)
 
 ## Getting started
 
@@ -37,6 +39,7 @@ Fill in:
 | `RESEND_API_KEY` | [resend.com/api-keys](https://resend.com/api-keys) (optional — emails are skipped with a console warning if unset) |
 | `RESEND_FROM_EMAIL` | `onboarding@resend.dev` works until you verify your own domain in Resend |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Optional — used by `db:seed` to create the admin account. Defaults to `admin@nejclothing.test` / `change-this-password` if unset |
+| `PAYSTACK_SECRET_KEY` / `PAYSTACK_PUBLIC_KEY` / `PAYSTACK_SUBACCOUNT_CODE` / `PAYSTACK_CURRENCY` | Optional — [dashboard.paystack.com](https://dashboard.paystack.com/#/settings/developer). Checkout falls back to "log the order, no charge" if `PAYSTACK_SECRET_KEY` is unset |
 
 ### 3. Apply the database schema
 
@@ -74,6 +77,17 @@ There's no ORM. `src/lib/db/index.ts` exports `sql`, the tagged-template query f
 
 If you'd rather use Neon's own SQL editor to poke around the data, that works fine too — there's no drizzle-studio equivalent bundled, since there's no ORM.
 
+## Payments
+
+Checkout works two ways, depending on whether `PAYSTACK_SECRET_KEY` is set in `.env.local`:
+
+- **Not set (default):** the order is logged to Postgres as `status = 'pending'` and a confirmation email goes out immediately. No money moves — this is what you get out of the box, and what you're seeing if checkout completes instantly without a Paystack redirect.
+- **Set:** after the order is logged, the customer is redirected to Paystack's hosted checkout (`src/lib/paystack.ts` → `initializeTransaction`). Paystack redirects back to `/api/checkout/paystack/callback`, which **verifies the transaction server-side** (never trusts the redirect alone), checks the paid amount matches the order total, then marks the order `status = 'paid'` and sends the confirmation email. Failed/abandoned payments mark the order `status = 'failed'` and send the customer back to `/checkout` with a banner — nothing is charged.
+- **To turn this on:** get your keys from [dashboard.paystack.com](https://dashboard.paystack.com/#/settings/developer) and add `PAYSTACK_SECRET_KEY` (and `PAYSTACK_PUBLIC_KEY`, for completeness) to `.env.local`, then restart `npm run dev`. Use the **test** secret key first — it starts with `sk_test_` — and Paystack's [test cards](https://paystack.com/docs/payments/test-payments/) to run a full checkout before switching to a live key.
+- **Subaccount split:** if `PAYSTACK_SUBACCOUNT_CODE` is set, it's passed on every transaction so the payment splits to that subaccount per whatever percentage you've configured on it in the Paystack dashboard (Settings → Subaccounts) — the split ratio isn't set in code.
+- **Currency:** `PAYSTACK_CURRENCY` defaults to `NGN`, which is also the app's base currency (see below) — so the amount sent to Paystack is the exact price entered in the admin panel, in kobo, with **no approximation or conversion involved**. If you set `PAYSTACK_CURRENCY` to something else, that amount goes through the same approximate rate table as the currency switcher.
+- Written against Paystack's standard, stable REST API and type-checked/built cleanly, but **not exercised against a live Paystack account** from this environment — test thoroughly before going live.
+
 ## What's included
 
 - **`/`** — hero with live countdown to the next drop (Fridays 18:00), featured stock, manifesto strip
@@ -81,15 +95,16 @@ If you'd rather use Neon's own SQL editor to poke around the data, that works fi
 - **`/collections`**, **`/collections/[slug]`** — curated groups of products
 - **`/product/[slug]`** — product detail, size + quantity picker, add to cart
 - **`/cart`** — line-item editing, persisted to `localStorage`
-- **`/checkout`** — collects shipping details, logs the order to Postgres, sends a confirmation email. No payment processor is wired up — wire in Stripe (or similar) before taking real payments; the checkout form says so explicitly.
+- **`/checkout`** — collects shipping details, logs the order, then either confirms immediately or sends the customer to pay via Paystack (see [Payments](#payments))
 - **`/checkout/confirmed/[orderNumber]`** — receipt-styled order confirmation, always shown in GBP (the actual recorded charge currency)
 - **`/account`**, **`/account/login`**, **`/account/signup`** — signup/login/logout, order history. `/account` is protected by `src/proxy.ts`, which redirects signed-out visitors to login.
-- **`/admin`**, **`/admin/collections`**, **`/admin/collections/new`** — create/delete collections and assign products to them. Requires a session with `role = "admin"` (see `ADMIN_EMAIL`/`ADMIN_PASSWORD` above); enforced both in `proxy.ts` and again in the API route itself.
-- Newsletter signup in the footer → `newsletter_subscribers` table
+- **`/admin`**, **`/admin/products`** (edit price/stock/status/details), **`/admin/collections`** (create/edit/delete), **`/admin/content`** — requires a session with `role = "admin"` (see `ADMIN_EMAIL`/`ADMIN_PASSWORD` above); enforced both in `proxy.ts` and again in each API route. Has its own top nav + logout, shared via `src/app/admin/layout.tsx`.
+- A join-the-community email popup, shown once per browser after a short delay (skipped on `/checkout`, `/account`, `/admin`) — dismiss state and submissions are remembered in `localStorage`
+- Newsletter signup in the footer, plus a "Powered by NEJ." credit link at the very bottom → `newsletter_subscribers` table
 
 ## Currency notes
 
-Prices are stored and actually charged in **GBP** — there's no payment processor connected yet. Other currencies shown while browsing (`src/lib/currency.ts`) are converted using a small **static, approximate** rate table for display only; they are not live exchange rates. Refresh that table periodically, or better, swap it for a real FX provider (exchangerate.host, Open Exchange Rates, etc.) before this matters for real money. Order confirmations and account order history always show the true GBP amount that was recorded.
+**NGN (Naira) is the base currency** — every price in the admin panel is entered in Naira, stored in the database as kobo (`price_cents`, despite the name), and is what actually gets charged via Paystack. Other currencies shown while browsing (`src/lib/currency.ts`) are converted from that NGN base using a small **static, approximate** rate table for display only — not a live feed, and last refreshed against real rates in early August 2026. Refresh that table periodically, or swap in a real FX provider (exchangerate.host, Open Exchange Rates, etc.), before relying on it for anything beyond a rough browsing estimate. Order confirmations and account order history always show the true NGN amount that was recorded.
 
 ## i18n notes
 
@@ -117,8 +132,9 @@ src/
 
 - **No product photography** — garments are rendered as minimal line-icon illustrations (`GarmentIcon.tsx`) on flat colourway swatches, spec-sheet style. Swap in real photography by replacing the image area in `ProductCard.tsx` / `product/[slug]/page.tsx` once you have shoot assets.
 - **Auth is intentionally simple**: bcrypt + signed cookie, no password reset flow, no email verification. Good enough for a real store's MVP; add those before handling a large user base.
-- **No payment processor** — checkout logs orders and emails a confirmation but never charges a card. Add Stripe (or similar) in `src/app/api/checkout/route.ts` before going live.
+- **Paystack integration is untested against a live account** — written against Paystack's stable, documented REST API, type-checked and built cleanly, but there's no way to exercise a real payment from this environment. Test thoroughly with Paystack's test keys/test cards before going live.
 - **Admin bootstrapping is seed-only** — there's no UI to promote an existing customer account to admin; re-run `db:seed` with different `ADMIN_EMAIL`/`ADMIN_PASSWORD`, or update a user's `role` column directly in Neon's SQL editor.
+- **"Editable from admin" covers a specific set of content**, not literally every string on the site: product/collection data, plus the hero lede, the three manifesto blurbs, and the footer description (`/admin/content`). Navigation, buttons, and other fixed UI text still come from the translated i18n dictionaries — making those admin-editable would mean either editing per-language (a much bigger content-management system) or breaking translation for whichever admin edits them. Login/signup forms are also still English-only.
 
 ## Deploying
 

@@ -5,6 +5,8 @@ import { sql } from "@/lib/db";
 import { generateOrderNumber } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
 import { sendOrderConfirmationEmail } from "@/lib/email/send";
+import { isPaystackConfigured, initializeTransaction, getPaystackCurrency } from "@/lib/paystack";
+import { convertFromBaseCents } from "@/lib/currency";
 
 const checkoutSchema = z.object({
   name: z.string().min(1),
@@ -26,6 +28,10 @@ const checkoutSchema = z.object({
     )
     .min(1),
 });
+
+// Paystack's primary settlement currency for the connected account/subaccount.
+// See getPaystackCurrency() in lib/paystack.ts for how this is resolved.
+const PAYSTACK_CURRENCY = getPaystackCurrency();
 
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
@@ -73,17 +79,47 @@ export async function POST(request: NextRequest) {
   ];
   await sql.transaction(queries);
 
-  await sendOrderConfirmationEmail(data.email, {
-    name: data.name,
-    orderNumber,
-    items: data.items.map((i) => ({
-      productName: i.name,
-      size: i.size,
-      quantity: i.quantity,
-      unitPriceCents: i.unitPriceCents,
-    })),
-    totalCents,
-  });
+  // No Paystack keys configured — fall back to the original "log the order,
+  // email a confirmation, done" flow so the app still works out of the box.
+  if (!isPaystackConfigured()) {
+    await sendOrderConfirmationEmail(data.email, {
+      name: data.name,
+      orderNumber,
+      items: data.items.map((i) => ({
+        productName: i.name,
+        size: i.size,
+        quantity: i.quantity,
+        unitPriceCents: i.unitPriceCents,
+      })),
+      totalCents,
+    });
+    return NextResponse.json({ orderNumber });
+  }
 
-  return NextResponse.json({ orderNumber });
+  // Paystack is configured — send the customer to pay. The confirmation
+  // email goes out from the callback route, only once payment is verified.
+  const amount = convertFromBaseCents(totalCents, PAYSTACK_CURRENCY);
+  const callbackUrl = new URL("/api/checkout/paystack/callback", request.nextUrl.origin).toString();
+
+  try {
+    const { authorizationUrl } = await initializeTransaction({
+      email: data.email,
+      amount,
+      currency: PAYSTACK_CURRENCY,
+      reference: orderNumber,
+      callbackUrl,
+      metadata: { orderNumber },
+    });
+    return NextResponse.json({ authorizationUrl });
+  } catch (err) {
+    return NextResponse.json(
+      {
+        error:
+          err instanceof Error
+            ? err.message
+            : "Could not start payment — try again.",
+      },
+      { status: 502 },
+    );
+  }
 }

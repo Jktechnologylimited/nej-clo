@@ -54,6 +54,11 @@ CREATE TABLE IF NOT EXISTS orders (
 
 CREATE UNIQUE INDEX IF NOT EXISTS orders_order_number_idx ON orders (order_number);
 
+-- Stores the Paystack transaction reference once payment is initiated, and
+-- lets order status move pending -> paid / failed. Same retrofit pattern as
+-- the users.role column above.
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_reference TEXT;
+
 CREATE TABLE IF NOT EXISTS order_items (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
@@ -90,3 +95,14 @@ CREATE TABLE IF NOT EXISTS product_collections (
 
 CREATE UNIQUE INDEX IF NOT EXISTS product_collections_pair_idx
   ON product_collections (product_id, collection_id);
+
+-- Admin-editable marketing copy (hero lede, manifesto blurbs, footer
+-- description). A plain key/value store rather than dedicated columns, since
+-- the set of editable blocks is expected to grow. Missing keys fall back to
+-- the English defaults baked into the i18n dictionaries — see
+-- src/lib/site-content.ts.
+CREATE TABLE IF NOT EXISTS site_content (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);

@@ -1,5 +1,5 @@
 import { getAllProducts } from "@/lib/products";
-import { NewCollectionForm } from "./NewCollectionForm";
+import { CollectionForm } from "../CollectionForm";
 
 export default async function NewCollectionPage() {
   const productList = await getAllProducts();
@@ -13,7 +13,7 @@ export default async function NewCollectionPage() {
         New collection
       </h1>
 
-      <NewCollectionForm products={productList} />
+      <CollectionForm products={productList} />
     </div>
   );
 }

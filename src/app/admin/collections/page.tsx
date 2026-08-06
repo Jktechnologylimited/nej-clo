@@ -54,6 +54,12 @@ export default async function AdminCollectionsPage() {
                 >
                   VIEW
                 </Link>
+                <Link
+                  href={`/admin/collections/${c.id}/edit`}
+                  className="font-mono-data text-[11px] tracking-[0.1em] text-paper/60 hover:text-amber"
+                >
+                  EDIT
+                </Link>
                 <DeleteCollectionButton id={c.id} name={c.name} />
               </div>
             </div>

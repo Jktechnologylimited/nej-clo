@@ -6,16 +6,25 @@ import { getNextDropDate } from "@/lib/utils";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getCurrency } from "@/lib/i18n/get-currency";
 import { getDictionary } from "@/lib/i18n/dictionaries";
+import { getSiteContent } from "@/lib/site-content";
 
 export default async function Home() {
-  const [featured, dropCode, locale, currency] = await Promise.all([
+  const [featured, dropCode, locale, currency, content] = await Promise.all([
     getFeaturedProducts(4),
     getLatestDropCode(),
     getLocale(),
     getCurrency(),
+    getSiteContent(),
   ]);
   const t = getDictionary(locale);
   const nextDrop = getNextDropDate();
+
+  const heroLede = content.hero_lede || t.hero.lede;
+  const manifestoItems = t.manifesto.items.map((item, i) => ({
+    ...item,
+    title: content[`manifesto_${i + 1}_title` as keyof typeof content] || item.title,
+    body: content[`manifesto_${i + 1}_body` as keyof typeof content] || item.body,
+  }));
 
   return (
     <div>
@@ -33,7 +42,7 @@ export default async function Home() {
                 {t.hero.title2}
               </h1>
               <p className="mt-6 max-w-md font-body text-sm leading-relaxed text-paper/60">
-                {t.hero.lede}
+                {heroLede}
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
@@ -91,7 +100,7 @@ export default async function Home() {
       {/* Manifesto strip */}
       <section className="border-y border-line bg-bg-raised">
         <div className="mx-auto grid max-w-6xl gap-8 px-5 py-14 sm:grid-cols-3 sm:px-8">
-          {t.manifesto.items.map((item) => (
+          {manifestoItems.map((item) => (
             <div key={item.n}>
               <p className="font-mono-data text-xs text-amber">{item.n}</p>
               <h3 className="mt-2 font-display text-lg font-extrabold uppercase text-paper">

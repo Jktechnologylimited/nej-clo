@@ -7,11 +7,26 @@ import type { Product } from "@/lib/db/types";
 const inputClass =
   "w-full border border-line-strong bg-transparent px-3 py-2.5 font-mono-data text-sm text-paper placeholder:text-paper/30 focus:border-amber focus:outline-none";
 
+type Initial = {
+  id: string;
+  name: string;
+  description: string;
+  slug: string;
+  productIds: string[];
+};
 
-
-export function NewCollectionForm({ products }: { products: Product[] }) {
+export function CollectionForm({
+  products,
+  initial,
+}: {
+  products: Product[];
+  initial?: Initial;
+}) {
   const router = useRouter();
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const isEdit = !!initial;
+  const [selected, setSelected] = useState<Set<string>>(
+    new Set(initial?.productIds ?? []),
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,17 +48,21 @@ export function NewCollectionForm({ products }: { products: Product[] }) {
     const payload = {
       name: form.get("name"),
       description: form.get("description"),
+      ...(isEdit ? { slug: form.get("slug") } : {}),
       productIds: Array.from(selected),
     };
 
     try {
-      const res = await fetch("/api/admin/collections", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        isEdit ? `/api/admin/collections/${initial!.id}` : "/api/admin/collections",
+        {
+          method: isEdit ? "PATCH" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        },
+      );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Failed to create collection");
+      if (!res.ok) throw new Error(data.error ?? "Something went wrong");
       router.push("/admin/collections");
       router.refresh();
     } catch (err) {
@@ -58,8 +77,32 @@ export function NewCollectionForm({ products }: { products: Product[] }) {
         <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
           NAME
         </span>
-        <input name="name" required placeholder="e.g. Blackout Pack" className={inputClass} />
+        <input
+          name="name"
+          required
+          defaultValue={initial?.name}
+          placeholder="e.g. Blackout Pack"
+          className={inputClass}
+        />
       </label>
+
+      {isEdit && (
+        <label className="block">
+          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+            SLUG — /collections/…
+          </span>
+          <input
+            name="slug"
+            required
+            pattern="[a-z0-9-]+"
+            defaultValue={initial?.slug}
+            className={inputClass}
+          />
+          <span className="mt-1 block font-mono-data text-[10px] text-paper/30">
+            Lowercase letters, numbers, and hyphens only. Changing this changes the page&apos;s URL.
+          </span>
+        </label>
+      )}
 
       <label className="block">
         <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
@@ -69,6 +112,7 @@ export function NewCollectionForm({ products }: { products: Product[] }) {
           name="description"
           required
           rows={3}
+          defaultValue={initial?.description}
           placeholder="One or two lines about what ties this collection together."
           className={inputClass}
         />
@@ -110,7 +154,7 @@ export function NewCollectionForm({ products }: { products: Product[] }) {
         disabled={submitting}
         className="w-full border border-paper bg-paper px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber disabled:opacity-50"
       >
-        {submitting ? "SAVING…" : "CREATE COLLECTION"}
+        {submitting ? "SAVING…" : isEdit ? "SAVE CHANGES" : "CREATE COLLECTION"}
       </button>
     </form>
   );
