@@ -11,6 +11,11 @@ const updateSchema = z.object({
     .min(1)
     .regex(/^[a-z0-9-]+$/, "Slug can only contain lowercase letters, numbers, and hyphens"),
   productIds: z.array(z.string()).default([]),
+  imageUrl: z
+    .string()
+    .max(2_500_000, "Image is too large")
+    .regex(/^data:image\//, "Expected an image data URL")
+    .nullable(),
 });
 
 async function requireAdmin() {

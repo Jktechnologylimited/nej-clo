@@ -3,12 +3,12 @@ import { sql } from "@/lib/db";
 import { slugify } from "@/lib/utils";
 import type { Collection, Product } from "@/lib/db/types";
 
-const COLLECTION_COLUMNS = `id, slug, name, description, created_at AS "createdAt"`;
+const COLLECTION_COLUMNS = `id, slug, name, description, image_url AS "imageUrl", created_at AS "createdAt"`;
 
 const PRODUCT_COLUMNS = `
   p.id, p.slug, p.name, p.category, p.description, p.colorway, p.sku,
   p.drop_code AS "dropCode", p.price_cents AS "priceCents", p.stock, p.status,
-  p.sizes, p.created_at AS "createdAt"
+  p.sizes, p.image_url AS "imageUrl", p.created_at AS "createdAt"
 `;
 
 export async function getAllCollections(): Promise<Collection[]> {
@@ -64,6 +64,7 @@ export async function createCollection(input: {
   name: string;
   description: string;
   productIds: string[];
+  imageUrl: string | null;
 }): Promise<Collection> {
   const id = randomUUID();
   const slug = slugify(input.name);
@@ -73,8 +74,8 @@ export async function createCollection(input: {
   // the transaction API needs its query list constructed synchronously, so
   // the second insert can't depend on a RETURNING value from the first.
   const queries = [
-    sql`INSERT INTO collections (id, slug, name, description)
-        VALUES (${id}, ${slug}, ${input.name}, ${input.description})`,
+    sql`INSERT INTO collections (id, slug, name, description, image_url)
+        VALUES (${id}, ${slug}, ${input.name}, ${input.description}, ${input.imageUrl})`,
     ...input.productIds.map(
       (productId) =>
         sql`INSERT INTO product_collections (product_id, collection_id)
@@ -92,11 +93,18 @@ export async function createCollection(input: {
 
 export async function updateCollection(
   id: string,
-  input: { name: string; description: string; slug: string; productIds: string[] },
+  input: {
+    name: string;
+    description: string;
+    slug: string;
+    productIds: string[];
+    imageUrl: string | null;
+  },
 ): Promise<Collection> {
   await sql`
     UPDATE collections
-    SET name = ${input.name}, description = ${input.description}, slug = ${input.slug}
+    SET name = ${input.name}, description = ${input.description}, slug = ${input.slug},
+        image_url = ${input.imageUrl}
     WHERE id = ${id}
   `;
 

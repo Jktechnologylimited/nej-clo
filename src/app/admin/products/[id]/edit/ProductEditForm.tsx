@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Product } from "@/lib/db/types";
 import { productCategoryValues, productStatusValues } from "@/lib/db/types";
+import { ImageUploadField } from "@/components/ImageUploadField";
 
 const inputClass =
   "w-full border border-line-strong bg-transparent px-3 py-2.5 font-mono-data text-sm text-paper placeholder:text-paper/30 focus:border-amber focus:outline-none";
@@ -12,6 +13,7 @@ const selectClass =
 
 export function ProductEditForm({ product }: { product: Product }) {
   const router = useRouter();
+  const [imageUrl, setImageUrl] = useState<string | null>(product.imageUrl);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,6 +35,7 @@ export function ProductEditForm({ product }: { product: Product }) {
       stock: Number(form.get("stock")),
       status: form.get("status"),
       sizes: form.get("sizes"),
+      imageUrl,
     };
 
     try {
@@ -53,6 +56,8 @@ export function ProductEditForm({ product }: { product: Product }) {
 
   return (
     <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+      <ImageUploadField label="PRODUCT PHOTO" value={imageUrl} onChange={setImageUrl} />
+
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
           <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">

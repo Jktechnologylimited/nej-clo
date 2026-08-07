@@ -181,12 +181,12 @@ export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) 
             {items.map((item) => (
               <div
                 key={`${item.productId}-${item.size}`}
-                className="flex justify-between font-mono-data text-xs text-paper/70"
+                className="flex justify-between gap-2 font-mono-data text-xs text-paper/70"
               >
-                <span>
+                <span className="min-w-0 truncate">
                   {item.name} — {item.size} × {item.quantity}
                 </span>
-                <span>{formatPrice(item.unitPriceCents * item.quantity)}</span>
+                <span className="shrink-0">{formatPrice(item.unitPriceCents * item.quantity)}</span>
               </div>
             ))}
           </div>

@@ -32,6 +32,7 @@ export type Product = {
   stock: number;
   status: ProductStatus;
   sizes: string;
+  imageUrl: string | null;
   createdAt: string;
 };
 
@@ -76,5 +77,6 @@ export type Collection = {
   slug: string;
   name: string;
   description: string;
+  imageUrl: string | null;
   createdAt: string;
 };

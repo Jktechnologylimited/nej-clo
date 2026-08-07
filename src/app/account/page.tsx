@@ -65,11 +65,11 @@ export default async function AccountPage() {
                 href={`/checkout/confirmed/${order.orderNumber}`}
                 className="flex items-center justify-between gap-4 px-5 py-4 transition hover:bg-bg-raised"
               >
-                <div>
-                  <p className="font-mono-data text-xs tracking-[0.05em] text-paper">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-mono-data text-xs tracking-[0.05em] text-paper">
                     {order.orderNumber}
                   </p>
-                  <p className="mt-1 font-mono-data text-[11px] text-paper/40">
+                  <p className="mt-1 truncate font-mono-data text-[11px] text-paper/40">
                     {new Date(order.createdAt).toLocaleDateString(dateLocale, {
                       day: "2-digit",
                       month: "short",
@@ -79,7 +79,7 @@ export default async function AccountPage() {
                     {order.status.toUpperCase()}
                   </p>
                 </div>
-                <p className="font-mono-data text-sm text-paper">
+                <p className="shrink-0 font-mono-data text-sm text-paper">
                   {formatPrice(order.totalCents)}
                 </p>
               </Link>

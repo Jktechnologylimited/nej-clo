@@ -33,6 +33,7 @@ export default async function EditCollectionPage({
           description: collection.description,
           slug: collection.slug,
           productIds: currentProducts.map((p) => p.id),
+          imageUrl: collection.imageUrl,
         }}
       />
     </div>

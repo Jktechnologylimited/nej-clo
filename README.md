@@ -98,7 +98,7 @@ Checkout works two ways, depending on whether `PAYSTACK_SECRET_KEY` is set in `.
 - **`/checkout`** — collects shipping details, logs the order, then either confirms immediately or sends the customer to pay via Paystack (see [Payments](#payments))
 - **`/checkout/confirmed/[orderNumber]`** — receipt-styled order confirmation, always shown in GBP (the actual recorded charge currency)
 - **`/account`**, **`/account/login`**, **`/account/signup`** — signup/login/logout, order history. `/account` is protected by `src/proxy.ts`, which redirects signed-out visitors to login.
-- **`/admin`**, **`/admin/products`** (edit price/stock/status/details), **`/admin/collections`** (create/edit/delete), **`/admin/content`** — requires a session with `role = "admin"` (see `ADMIN_EMAIL`/`ADMIN_PASSWORD` above); enforced both in `proxy.ts` and again in each API route. Has its own top nav + logout, shared via `src/app/admin/layout.tsx`.
+- **`/admin`**, **`/admin/products`** (edit price/stock/status/photo/details), **`/admin/collections`** (create/edit/delete, cover photo), **`/admin/content`** — requires a session with `role = "admin"` (see `ADMIN_EMAIL`/`ADMIN_PASSWORD` above); enforced both in `proxy.ts` and again in each API route. Has its own top nav + logout, shared via `src/app/admin/layout.tsx`.
 - A join-the-community email popup, shown once per browser after a short delay (skipped on `/checkout`, `/account`, `/admin`) — dismiss state and submissions are remembered in `localStorage`
 - Newsletter signup in the footer, plus a "Powered by NEJ." credit link at the very bottom → `newsletter_subscribers` table
 
@@ -130,7 +130,7 @@ src/
 
 ## Notes on the current build
 
-- **No product photography** — garments are rendered as minimal line-icon illustrations (`GarmentIcon.tsx`) on flat colourway swatches, spec-sheet style. Swap in real photography by replacing the image area in `ProductCard.tsx` / `product/[slug]/page.tsx` once you have shoot assets.
+- **Product/collection photos are optional** — upload one from `/admin/products/[id]/edit` or the collection forms; without one, products fall back to the minimal line-icon illustrations (`GarmentIcon.tsx`) on flat colourway swatches, and collections just show text. Images are downscaled to max 1200px and compressed to JPEG client-side (`ImageUploadField.tsx`), then stored as a `data:` URL directly in Postgres — no external storage account needed, at the cost of larger row sizes. If the catalog grows a lot, swap this for Vercel Blob/S3/Cloudinary and store a real URL in the same `image_url` column instead.
 - **Auth is intentionally simple**: bcrypt + signed cookie, no password reset flow, no email verification. Good enough for a real store's MVP; add those before handling a large user base.
 - **Paystack integration is untested against a live account** — written against Paystack's stable, documented REST API, type-checked and built cleanly, but there's no way to exercise a real payment from this environment. Test thoroughly with Paystack's test keys/test cards before going live.
 - **Admin bootstrapping is seed-only** — there's no UI to promote an existing customer account to admin; re-run `db:seed` with different `ADMIN_EMAIL`/`ADMIN_PASSWORD`, or update a user's `role` column directly in Neon's SQL editor.

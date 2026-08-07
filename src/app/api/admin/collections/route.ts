@@ -7,6 +7,12 @@ const createSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
   productIds: z.array(z.string()).default([]),
+  imageUrl: z
+    .string()
+    .max(2_500_000, "Image is too large")
+    .regex(/^data:image\//, "Expected an image data URL")
+    .nullable()
+    .default(null),
 });
 
 async function requireAdmin() {

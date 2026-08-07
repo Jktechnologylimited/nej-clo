@@ -36,6 +36,13 @@ CREATE TABLE IF NOT EXISTS products (
 
 CREATE UNIQUE INDEX IF NOT EXISTS products_slug_idx ON products (slug);
 
+-- Product photo, stored as a data: URL (base64-encoded, downscaled/compressed
+-- client-side before upload — see ImageUploadField.tsx). Simple and needs no
+-- external storage account, at the cost of bloating row size for a large
+-- catalog. Swap for Vercel Blob/S3/Cloudinary and store a real URL here
+-- instead if the catalog grows significantly.
+ALTER TABLE products ADD COLUMN IF NOT EXISTS image_url TEXT;
+
 CREATE TABLE IF NOT EXISTS orders (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   order_number TEXT NOT NULL,
@@ -87,6 +94,9 @@ CREATE TABLE IF NOT EXISTS collections (
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS collections_slug_idx ON collections (slug);
+
+-- Collection cover image, same storage approach as products.image_url above.
+ALTER TABLE collections ADD COLUMN IF NOT EXISTS image_url TEXT;
 
 CREATE TABLE IF NOT EXISTS product_collections (
   product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,

@@ -30,17 +30,26 @@ export default async function ProductPage({
     <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-14">
       <div className="grid gap-10 lg:grid-cols-2">
         <div
-          className="relative flex aspect-[4/5] items-center justify-center border border-line-strong"
+          className="relative flex aspect-[4/5] items-center justify-center overflow-hidden border border-line-strong"
           style={{ backgroundColor: swatchFor(product.colorway) }}
         >
-          <GarmentIcon
-            category={product.category}
-            className={`h-40 w-40 ${
-              product.colorway === "Bone" || product.colorway === "Amber"
-                ? "text-ink/70"
-                : "text-paper/85"
-            } ${soldOut ? "opacity-40" : ""}`}
-          />
+          {product.imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element -- stored as a data: URL, next/image doesn't optimize those
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              className={`h-full w-full object-cover ${soldOut ? "opacity-40" : ""}`}
+            />
+          ) : (
+            <GarmentIcon
+              category={product.category}
+              className={`h-40 w-40 ${
+                product.colorway === "Bone" || product.colorway === "Amber"
+                  ? "text-ink/70"
+                  : "text-paper/85"
+              } ${soldOut ? "opacity-40" : ""}`}
+            />
+          )}
           {product.status !== "available" && (
             <div className="absolute right-4 top-4">
               <StampBadge

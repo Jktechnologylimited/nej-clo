@@ -33,6 +33,15 @@ export default async function CollectionPage({
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-14">
+      {collection.imageUrl && (
+        // eslint-disable-next-line @next/next/no-img-element -- stored as a data: URL, next/image doesn't optimize those
+        <img
+          src={collection.imageUrl}
+          alt={collection.name}
+          className="mb-10 aspect-[3/1] w-full border border-line-strong object-cover"
+        />
+      )}
+
       <div className="mb-10 max-w-2xl">
         <p className="font-mono-data text-[11px] tracking-[0.2em] text-paper/40">
           {t.collections.eyebrow} — {collection.slug.toUpperCase()}

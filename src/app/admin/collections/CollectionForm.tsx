@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Product } from "@/lib/db/types";
+import { ImageUploadField } from "@/components/ImageUploadField";
 
 const inputClass =
   "w-full border border-line-strong bg-transparent px-3 py-2.5 font-mono-data text-sm text-paper placeholder:text-paper/30 focus:border-amber focus:outline-none";
@@ -13,6 +14,7 @@ type Initial = {
   description: string;
   slug: string;
   productIds: string[];
+  imageUrl: string | null;
 };
 
 export function CollectionForm({
@@ -27,6 +29,7 @@ export function CollectionForm({
   const [selected, setSelected] = useState<Set<string>>(
     new Set(initial?.productIds ?? []),
   );
+  const [imageUrl, setImageUrl] = useState<string | null>(initial?.imageUrl ?? null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,6 +53,7 @@ export function CollectionForm({
       description: form.get("description"),
       ...(isEdit ? { slug: form.get("slug") } : {}),
       productIds: Array.from(selected),
+      imageUrl,
     };
 
     try {
@@ -73,6 +77,8 @@ export function CollectionForm({
 
   return (
     <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+      <ImageUploadField label="COVER IMAGE" value={imageUrl} onChange={setImageUrl} />
+
       <label className="block">
         <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
           NAME

@@ -20,6 +20,11 @@ const updateSchema = z.object({
   stock: z.number().int().nonnegative(),
   status: z.enum(productStatusValues),
   sizes: z.string().min(1),
+  imageUrl: z
+    .string()
+    .max(2_500_000, "Image is too large")
+    .regex(/^data:image\//, "Expected an image data URL")
+    .nullable(),
 });
 
 async function requireAdmin() {

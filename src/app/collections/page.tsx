@@ -34,21 +34,31 @@ export default async function CollectionsPage() {
             <Link
               key={c.id}
               href={`/collections/${c.slug}`}
-              className="group border border-line-strong bg-paper p-6 text-ink transition hover:border-amber"
+              className="group block border border-line-strong bg-paper text-ink transition hover:border-amber"
             >
-              <div className="flex items-center justify-between font-mono-data text-[11px] tracking-[0.15em] text-ink-muted">
-                <span>{c.slug.toUpperCase()}</span>
-                <span>{t.collections.items(counts.get(c.id) ?? 0)}</span>
+              {c.imageUrl && (
+                // eslint-disable-next-line @next/next/no-img-element -- stored as a data: URL, next/image doesn't optimize those
+                <img
+                  src={c.imageUrl}
+                  alt={c.name}
+                  className="aspect-[2/1] w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+                />
+              )}
+              <div className="p-6">
+                <div className="flex items-center justify-between font-mono-data text-[11px] tracking-[0.15em] text-ink-muted">
+                  <span>{c.slug.toUpperCase()}</span>
+                  <span>{t.collections.items(counts.get(c.id) ?? 0)}</span>
+                </div>
+                <h2 className="mt-3 font-display text-2xl font-extrabold uppercase tracking-tight">
+                  {c.name}
+                </h2>
+                <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-muted">
+                  {c.description}
+                </p>
+                <span className="mt-4 inline-block font-mono-data text-[11px] tracking-[0.15em] text-ink-muted transition group-hover:text-rust">
+                  {t.collections.shopCollection}
+                </span>
               </div>
-              <h2 className="mt-3 font-display text-2xl font-extrabold uppercase tracking-tight">
-                {c.name}
-              </h2>
-              <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-muted">
-                {c.description}
-              </p>
-              <span className="mt-4 inline-block font-mono-data text-[11px] tracking-[0.15em] text-ink-muted transition group-hover:text-rust">
-                {t.collections.shopCollection}
-              </span>
             </Link>
           ))}
         </div>
