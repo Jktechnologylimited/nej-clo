@@ -34,22 +34,29 @@ export default async function CollectionPage({
   return (
     <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-14">
       {collection.imageUrl && (
-        // eslint-disable-next-line @next/next/no-img-element -- stored as a data: URL, next/image doesn't optimize those
-        <img
-          src={collection.imageUrl}
-          alt={collection.name}
-          className="mb-10 aspect-[3/1] w-full border border-line-strong object-cover"
-        />
+        <div className="relative mb-10">
+          {/* eslint-disable-next-line @next/next/no-img-element -- stored as a data: URL, next/image doesn't optimize those */}
+          <img
+            src={collection.imageUrl}
+            alt={collection.name}
+            className="aspect-[3/1] w-full border border-line-strong object-cover"
+          />
+          {collection.badge && (
+            <span className="absolute left-4 top-4 bg-ink px-2.5 py-1.5 font-mono-data text-xs font-bold tracking-[0.05em] text-paper">
+              {collection.badge.toUpperCase()}
+            </span>
+          )}
+        </div>
       )}
 
       <div className="mb-10 max-w-2xl">
-        <p className="font-mono-data text-[11px] tracking-[0.2em] text-paper/40">
+        <p className="font-mono-data text-[11px] tracking-[0.2em] text-ink/40">
           {t.collections.eyebrow} — {collection.slug.toUpperCase()}
         </p>
-        <h1 className="mt-1 font-display text-3xl font-extrabold uppercase tracking-tight text-paper sm:text-4xl">
+        <h1 className="mt-1 font-display text-3xl font-extrabold uppercase tracking-tight text-ink sm:text-4xl">
           {collection.name}
         </h1>
-        <p className="mt-3 text-sm leading-relaxed text-paper/60">
+        <p className="mt-3 text-sm leading-relaxed text-ink/60">
           {collection.description}
         </p>
       </div>

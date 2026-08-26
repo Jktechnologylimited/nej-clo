@@ -2,7 +2,42 @@
 
 Full-stack storefront for an independent streetwear label. Built with Next.js 16 (App Router, Turbopack), Neon Postgres with **raw parameterized SQL — no ORM**, Resend for transactional email, and a small custom session-based auth layer — no third-party auth provider needed.
 
-**Design concept:** everything is styled as a shipping manifest — products are "logged," carts are "manifests," orders are stamped receipts. Dark, guerrilla-drop energy in the hero (nod to Corteiz-style releases); quieter paper-toned ticket cards for browsing (nod to small-batch independent labels like Bolapsd). One consistent motif — perforated edges, batch numbers, monospace data — ties it together instead of a generic dark-theme-plus-accent template.
+**Design concept:** currently mid-redesign against a full 15-batch wireframe set, being applied in groups of three. The site is moving from an earlier dark-hero "manifest" concept to a light cream/beige palette (`#F5F2EA` / `#E8E2D3` / `#C4B59A` / `#111111` / `#686868`) with no dark sections — the "manifest" terminology (cart = manifest, "ADD TO MANIFEST", etc.) carries over since the wireframes were built on top of it.
+
+**Redesign status:** All 13 provided wireframe batches are built (Batches 1–5, 7–15 — Batch 6 was never provided, so it's skipped by necessity). Checkout and the admin panel were never part of the wireframe set at all, so there's no reference to build them against — both got a light-theme pass early on so they're legible and visually consistent with everything else, just not restructured to a specific spec, because none exists. `/legal/privacy` and `/legal/terms` remain generic placeholders since they weren't part of any batch either — see the note in that section.
+
+**Notable additions across redesign rounds:**
+
+*Batches 4, 5, 7 (Product Detail, Cart, Order Confirmation):*
+- Products now support a **photo gallery** (up to 6 images, `image_urls` array) instead of a single photo — the product page has a real thumbnail rail. Collections still take a single cover image.
+- **Flat-rate shipping** (`src/lib/shipping.ts`): ₦2,500 domestic, free over ₦100,000 subtotal. Applied in the cart estimate, the actual Paystack charge, and the order confirmation breakdown.
+- Cart items can now have their **size changed inline** via a dropdown (`CartProvider.setSize`), not just quantity.
+- Color swatches on the product page link between colorway "siblings" — products sharing the same name, matching how the seed data already models one garment in multiple colors.
+- Promo code field exists in the UI (matching the wireframe) but isn't wired to a real discount system yet — it shows a clear "coming soon" message on submit rather than silently doing nothing.
+- No reviews/ratings and no wishlist/save-for-later — both would need real backend systems and data that doesn't exist yet, so rather than fake star ratings or a non-functional bookmark icon, both are simply omitted from this pass.
+
+*Batches 8, 9, 10 (Account Dashboard, Orders, Order Tracking):*
+- **Real fulfillment tracking**, not a static explainer — `src/lib/order-status.ts` defines the full status vocabulary (`pending → paid → processing → dispatched → in_transit → out_for_delivery → delivered`, plus `failed`/`cancelled`). Orders also carry `carrier` and `tracking_number`, both admin-settable.
+- **New admin section**: `/admin/orders` — previously there was no way to view or manage orders from the admin panel at all. Lets you update an order's status/carrier/tracking number, which is what actually drives the account-side tracking page and dashboard stats.
+- **Account section restructured** with a shared sidebar (`/account` route group) and real pages: dashboard with live stats, a searchable/filterable order list, per-order detail with a working "Reorder" button, and a tracking page with a real (not fake) progress timeline.
+- Explicitly **not simulated**: the tracking page has no live map or GPS position, since there's no real carrier API integration behind it — showing one would mean fabricating a location. The timeline itself is real, driven by whatever status admin has set.
+- Addresses, Payment Methods, Profile, and Security are placeholder pages under `/account` — each would need its own real backend (saved-address CRUD, Paystack card tokenization, profile/password update flows) that's out of scope for a wireframe-fidelity pass.
+
+*Batches 11, 12, 13 (Drop Alerts, Collections, Search):*
+- **Real restock notifications**, not a mockup — sold-out product pages have a working "notify me when back in stock" form (`product_alerts` table). When admin flips a product's status off `sold_out`, everyone who signed up gets an actual email via Resend, and the list clears. Explicitly **not built**: SMS/push notification channels (no SMS provider configured) and the in-app notification bell/center (would need its own notifications data model generating records on order updates and restocks) — the wireframe's mockups for those would've been pure decoration without real infrastructure behind them, so they're left out rather than faked.
+- **Collections got a `badge` field** (admin-settable free text — "NEW DROP", "LIMITED", "RESTOCK", etc.), shown as a pill on the collection card and cover banner. The wireframe's Category/Type/Season filter dropdowns aren't built since there's no real taxonomy data behind them yet.
+- **Search is real**, not a stub — matches products (name, description, SKU, colorway, category) and collections (name, description) live as you type, no debounce needed at this catalog size. Recent searches persist via `localStorage`. "Popular searches" from the wireframe isn't built — there's no real analytics behind it, and faking popularity data felt worse than leaving it out.
+
+*Batches 14, 15 (About, Help & Info) — the last two:*
+- **About page** (`/about`) — hero, the 5-value Manifest section, brand story, and a 4-point "what makes NEJ different" grid, all real written copy. **Deliberately left out the wireframe's "Featured In" press-logo section** (Hypebeast, GQ, etc.) — this site has no actual press coverage, and displaying real publication names would be a false claim about the business. Add that section back once there's real coverage to show.
+- **Help & Info page** (`/help?tab=size-guide|shipping|returns|care`) — real tabbed content, not a mockup. The size chart has actual measurements (tops: XS–XXL, bottoms: 28–36 waist). Shipping figures are pulled live from `src/lib/shipping.ts`'s real constants rather than a separately hardcoded number, so this page can't drift out of sync with what checkout actually charges — and it only describes domestic Nigeria shipping, since that's the only rate that's actually implemented (the wireframe's international rates aren't wired into checkout, so claiming them here would've been misleading).
+- ⚠️ **`SUPPORT_EMAIL` in `HelpClient.tsx` is a placeholder** (`support@nejclothing.com`) — replace it with your real inbox before customers rely on it. It's used for the "Email Support" button and the returns process copy.
+- ⚠️ **Returns/shipping policy text is generic, reasonable e-commerce language, not a legal document** — have it reviewed before treating it as your actual binding policy, same caveat as the `/legal/privacy` and `/legal/terms` placeholders.
+
+*Bug fixes along the way:*
+- Twice now, a client component ended up receiving the *entire* translation dictionary as a prop from a server component (`SiteContentForm`, then `OrdersListClient` and `ShopClient`) — React can't serialize the dictionary's function-valued entries (like `checkout.confirm(price)`) across that boundary, so the page crashed. Fixed all three the same way: read translations via `useI18n()` client-side instead of passing them down, which is how every other client component in the app already does it. Swept the whole codebase afterward and found no more instances.
+- The mobile hamburger menu could render behind other page content. Root cause: the header's `position: sticky` + `z-40` creates its own CSS stacking context, which traps any nested element's z-index — a `z-50` child still can't out-rank content elsewhere on the page. Fixed by portaling the menu's overlay straight into `document.body`.
+- `migrate.ts` split SQL statements on raw `;` characters without knowing comments exist, so a semicolon used as ordinary punctuation inside a `--` comment ("...above; existing images...") silently corrupted a statement — and, worse, swallowed a real `ALTER TABLE` inside the broken chunk, so a column never actually got created. Fixed by stripping comments before splitting.
 
 ## Stack
 
@@ -87,6 +122,19 @@ Checkout works two ways, depending on whether `PAYSTACK_SECRET_KEY` is set in `.
 - **Subaccount split:** if `PAYSTACK_SUBACCOUNT_CODE` is set, it's passed on every transaction so the payment splits to that subaccount per whatever percentage you've configured on it in the Paystack dashboard (Settings → Subaccounts) — the split ratio isn't set in code.
 - **Currency:** `PAYSTACK_CURRENCY` defaults to `NGN`, which is also the app's base currency (see below) — so the amount sent to Paystack is the exact price entered in the admin panel, in kobo, with **no approximation or conversion involved**. If you set `PAYSTACK_CURRENCY` to something else, that amount goes through the same approximate rate table as the currency switcher.
 - Written against Paystack's standard, stable REST API and type-checked/built cleanly, but **not exercised against a live Paystack account** from this environment — test thoroughly before going live.
+
+## Mobile responsiveness
+
+Audited and fixed sitewide, not just spot-checked. The one serious bug: the header's nav (Shop All / Collections / About / Drop Alerts) was `hidden lg:flex` with **no mobile fallback at all** — anyone on a phone had no way to reach those from the header. Fixed with a proper slide-in hamburger menu (`MobileMenu.tsx`), scroll-locked while open, closes on Escape or backdrop tap.
+
+Other fixes from this pass:
+- **Product gallery** — the vertical thumbnail rail next to the main image, fine on tablet/desktop, was cramming the photo down to an unusably narrow strip on phones. Mobile now gets a full-width image with swipe arrows and a "2/5" counter badge instead, matching the wireframe's actual mobile pattern rather than just shrinking the desktop layout.
+- **Cart line items** — was relying on an implicit 2-column grid auto-flow for the mobile layout, which left the remove button stranded alone in its own row. Replaced with an explicit stacked card layout on mobile (name/remove on top, size/qty/price below) and kept the table-style grid for `sm:` and up.
+- **Hero headline** — `STOCK_LOG_XXX` is one unbroken string (underscores, no spaces), which meant it couldn't wrap at a word boundary and risked overflowing the viewport on the smallest phones. Reduced the base font size and added `break-words` as a safety net.
+- Two admin list rows (collections, and the pattern already present in products/orders) had the same "long text pushes action buttons off-screen" bug the price-overflow fix addressed earlier — same fix applied: `min-w-0`/`truncate` on the text column, `shrink-0` on the actions.
+- Shop's mobile filter panel now renders in a proper bordered/padded container when toggled open instead of appearing as bare unstyled content.
+
+Swept for the other usual culprits (fixed pixel widths, 3+ column grids with no mobile override, raw `<table>` elements, `whitespace-nowrap` without a scroll container) and didn't find further issues — everything else already had a working responsive pattern.
 
 ## What's included
 

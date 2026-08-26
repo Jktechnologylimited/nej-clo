@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { SiteContentMap } from "@/lib/site-content";
 
 const textareaClass =
-  "w-full border border-line-strong bg-transparent px-3 py-2.5 font-mono-data text-sm text-paper placeholder:text-paper/25 focus:border-amber focus:outline-none";
+  "w-full border border-line-strong bg-transparent px-3 py-2.5 font-mono-data text-sm text-ink placeholder:text-ink/25 focus:border-amber focus:outline-none";
 
 const FIELD_GROUPS: { heading: string; keys: string[]; multiline?: boolean }[] = [
   { heading: "HERO", keys: ["hero_lede"], multiline: true },
@@ -102,13 +102,13 @@ export function SiteContentForm({
     <form onSubmit={handleSubmit} className="mt-8 space-y-8">
       {FIELD_GROUPS.map((group) => (
         <div key={group.heading}>
-          <p className="mb-3 font-mono-data text-[11px] tracking-[0.15em] text-paper/40">
+          <p className="mb-3 font-mono-data text-[11px] tracking-[0.15em] text-ink/40">
             {group.heading}
           </p>
           <div className="space-y-3">
             {group.keys.map((key) => (
               <label key={key} className="block">
-                <span className="mb-1.5 block font-mono-data text-[10px] tracking-[0.1em] text-paper/30">
+                <span className="mb-1.5 block font-mono-data text-[10px] tracking-[0.1em] text-ink/30">
                   {FIELD_LABELS[key]}
                 </span>
                 <textarea
@@ -142,7 +142,7 @@ export function SiteContentForm({
           type="button"
           onClick={handleReset}
           disabled={resetting}
-          className="border border-line-strong px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-paper/60 transition hover:border-rust hover:text-rust disabled:opacity-50"
+          className="border border-line-strong px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-ink/60 transition hover:border-rust hover:text-rust disabled:opacity-50"
         >
           {resetting ? "…" : "RESET ALL TO DEFAULTS"}
         </button>

@@ -16,16 +16,16 @@ export default async function CollectionsPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-14">
       <div className="mb-8">
-        <p className="font-mono-data text-[11px] tracking-[0.2em] text-paper/40">
+        <p className="font-mono-data text-[11px] tracking-[0.2em] text-ink/40">
           {t.collections.eyebrow}
         </p>
-        <h1 className="mt-1 font-display text-3xl font-extrabold uppercase tracking-tight text-paper sm:text-4xl">
+        <h1 className="mt-1 font-display text-3xl font-extrabold uppercase tracking-tight text-ink sm:text-4xl">
           {t.collections.title}
         </h1>
       </div>
 
       {collectionList.length === 0 ? (
-        <p className="py-16 text-center font-mono-data text-sm text-paper/50">
+        <p className="py-16 text-center font-mono-data text-sm text-ink/50">
           {t.collections.empty}
         </p>
       ) : (
@@ -36,13 +36,28 @@ export default async function CollectionsPage() {
               href={`/collections/${c.slug}`}
               className="group block border border-line-strong bg-paper text-ink transition hover:border-amber"
             >
-              {c.imageUrl && (
-                // eslint-disable-next-line @next/next/no-img-element -- stored as a data: URL, next/image doesn't optimize those
-                <img
-                  src={c.imageUrl}
-                  alt={c.name}
-                  className="aspect-[2/1] w-full object-cover transition duration-300 group-hover:scale-[1.02]"
-                />
+              {c.imageUrl ? (
+                <div className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- stored as a data: URL, next/image doesn't optimize those */}
+                  <img
+                    src={c.imageUrl}
+                    alt={c.name}
+                    className="aspect-[2/1] w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+                  />
+                  {c.badge && (
+                    <span className="absolute left-3 top-3 bg-ink px-2 py-1 font-mono-data text-[10px] font-bold tracking-[0.05em] text-paper">
+                      {c.badge.toUpperCase()}
+                    </span>
+                  )}
+                </div>
+              ) : (
+                c.badge && (
+                  <div className="px-6 pt-6">
+                    <span className="inline-block bg-ink px-2 py-1 font-mono-data text-[10px] font-bold tracking-[0.05em] text-paper">
+                      {c.badge.toUpperCase()}
+                    </span>
+                  </div>
+                )
               )}
               <div className="p-6">
                 <div className="flex items-center justify-between font-mono-data text-[11px] tracking-[0.15em] text-ink-muted">

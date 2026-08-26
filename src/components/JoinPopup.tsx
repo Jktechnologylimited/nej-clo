@@ -72,7 +72,7 @@ export function JoinPopup() {
         <button
           onClick={dismiss}
           aria-label="Close"
-          className="absolute right-4 top-4 font-mono-data text-lg text-paper/40 transition hover:text-amber"
+          className="absolute right-4 top-4 font-mono-data text-lg text-ink/40 transition hover:text-amber"
         >
           ×
         </button>
@@ -80,10 +80,10 @@ export function JoinPopup() {
         <p className="font-mono-data text-[11px] tracking-[0.2em] text-amber">
           MANIFEST ALERT
         </p>
-        <h2 className="mt-2 font-display text-xl font-extrabold uppercase leading-tight text-paper">
+        <h2 className="mt-2 font-display text-xl font-extrabold uppercase leading-tight text-ink">
           {t.popup.title}
         </h2>
-        <p className="mt-2 text-sm leading-relaxed text-paper/60">{t.popup.body}</p>
+        <p className="mt-2 text-sm leading-relaxed text-ink/60">{t.popup.body}</p>
 
         {state === "done" ? (
           <p className="mt-5 font-mono-data text-xs tracking-[0.1em] text-amber">
@@ -97,7 +97,7 @@ export function JoinPopup() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t.popup.emailPlaceholder}
-              className="w-full border border-line-strong bg-transparent px-3 py-2.5 font-mono-data text-sm text-paper placeholder:text-paper/30 focus:border-amber focus:outline-none"
+              className="w-full border border-line-strong bg-transparent px-3 py-2.5 font-mono-data text-sm text-ink placeholder:text-ink/30 focus:border-amber focus:outline-none"
             />
             {state === "error" && (
               <p className="font-mono-data text-[11px] text-rust">
@@ -114,7 +114,7 @@ export function JoinPopup() {
             <button
               type="button"
               onClick={dismiss}
-              className="w-full py-1 text-center font-mono-data text-[11px] tracking-[0.1em] text-paper/30 transition hover:text-paper/60"
+              className="w-full py-1 text-center font-mono-data text-[11px] tracking-[0.1em] text-ink/30 transition hover:text-ink/60"
             >
               {t.popup.noThanks}
             </button>

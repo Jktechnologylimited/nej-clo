@@ -16,7 +16,7 @@ export function ProductGrid({
 }) {
   if (products.length === 0) {
     return (
-      <p className="py-16 text-center font-mono-data text-sm text-paper/50">
+      <p className="py-16 text-center font-mono-data text-sm text-ink-muted">
         {t.shop.empty}
       </p>
     );

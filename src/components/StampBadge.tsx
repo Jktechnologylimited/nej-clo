@@ -5,17 +5,17 @@ export function StampBadge({
   status: string;
   label: string;
 }) {
-  if (status === "available") return null;
-
-  const color =
+  const styles =
     status === "sold_out"
-      ? "text-rust"
-      : status === "restocked"
-        ? "text-amber"
-        : "text-paper";
+      ? "bg-ink text-paper"
+      : status === "restocked" || status === "limited"
+        ? "bg-amber text-ink"
+        : "bg-paper text-ink";
 
   return (
-    <span className={`stamp text-[10px] font-bold ${color}`}>
+    <span
+      className={`inline-block px-2 py-1 font-mono-data text-[10px] font-bold tracking-[0.05em] ${styles}`}
+    >
       {label.toUpperCase()}
     </span>
   );

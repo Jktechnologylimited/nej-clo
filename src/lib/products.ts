@@ -4,7 +4,7 @@ import type { Product } from "@/lib/db/types";
 const PRODUCT_COLUMNS = `
   id, slug, name, category, description, colorway, sku,
   drop_code AS "dropCode", price_cents AS "priceCents", stock, status, sizes,
-  image_url AS "imageUrl", created_at AS "createdAt"
+  image_urls AS "imageUrls", created_at AS "createdAt"
 `;
 
 export async function getAllProducts(): Promise<Product[]> {
@@ -40,6 +40,19 @@ export async function getProductById(id: string): Promise<Product | null> {
   return (rows[0] as Product) ?? null;
 }
 
+/**
+ * Other colorways of "the same" product — matched by name, matching how the
+ * seed data models a garment with multiple colorways as separate rows.
+ * Powers the color-swatch selector on the product page.
+ */
+export async function getColorwaySiblings(name: string, excludeId: string): Promise<Product[]> {
+  const rows = await sql.query(
+    `SELECT ${PRODUCT_COLUMNS} FROM products WHERE name = $1 AND id != $2 ORDER BY colorway`,
+    [name, excludeId],
+  );
+  return rows as unknown as Product[];
+}
+
 export async function updateProduct(
   id: string,
   input: {
@@ -54,7 +67,7 @@ export async function updateProduct(
     stock: number;
     status: string;
     sizes: string;
-    imageUrl: string | null;
+    imageUrls: string[];
   },
 ): Promise<Product | null> {
   await sql`
@@ -71,7 +84,7 @@ export async function updateProduct(
       stock = ${input.stock},
       status = ${input.status},
       sizes = ${input.sizes},
-      image_url = ${input.imageUrl}
+      image_urls = ${input.imageUrls}
     WHERE id = ${id}
   `;
   return getProductById(id);

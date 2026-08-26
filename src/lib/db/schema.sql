@@ -43,6 +43,15 @@ CREATE UNIQUE INDEX IF NOT EXISTS products_slug_idx ON products (slug);
 -- instead if the catalog grows significantly.
 ALTER TABLE products ADD COLUMN IF NOT EXISTS image_url TEXT;
 
+-- Product gallery — multiple photos per product (Batch 4 wireframe shows a
+-- thumbnail rail + main image). Superseding the single image_url column
+-- above; existing single images are migrated in, image_url itself is left
+-- in place but unused going forward rather than dropped, to stay reversible.
+ALTER TABLE products ADD COLUMN IF NOT EXISTS image_urls TEXT[] NOT NULL DEFAULT '{}';
+UPDATE products
+SET image_urls = ARRAY[image_url]
+WHERE image_url IS NOT NULL AND (image_urls IS NULL OR array_length(image_urls, 1) IS NULL);
+
 CREATE TABLE IF NOT EXISTS orders (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   order_number TEXT NOT NULL,
@@ -66,6 +75,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS orders_order_number_idx ON orders (order_numbe
 -- the users.role column above.
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_reference TEXT;
 
+-- Set by admin when dispatching an order (no live carrier API integration —
+-- see src/app/admin/orders). Powers the customer-facing tracking page.
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS carrier TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS tracking_number TEXT;
+
 CREATE TABLE IF NOT EXISTS order_items (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
@@ -85,6 +99,18 @@ CREATE TABLE IF NOT EXISTS newsletter_subscribers (
 
 CREATE UNIQUE INDEX IF NOT EXISTS newsletter_email_idx ON newsletter_subscribers (email);
 
+-- "Notify me when back in stock" signups. One row per (product, email); a
+-- signup is cleared once the notification email is sent — a customer who
+-- wants alerts for a future restock of the same item signs up again.
+CREATE TABLE IF NOT EXISTS product_alerts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  email TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS product_alerts_pair_idx ON product_alerts (product_id, email);
+
 CREATE TABLE IF NOT EXISTS collections (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   slug TEXT NOT NULL,
@@ -97,6 +123,10 @@ CREATE UNIQUE INDEX IF NOT EXISTS collections_slug_idx ON collections (slug);
 
 -- Collection cover image, same storage approach as products.image_url above.
 ALTER TABLE collections ADD COLUMN IF NOT EXISTS image_url TEXT;
+
+-- Short status tag shown on the collection card (e.g. "NEW DROP", "LIMITED",
+-- "RESTOCK") — free text, admin-set, no fixed vocabulary.
+ALTER TABLE collections ADD COLUMN IF NOT EXISTS badge TEXT;
 
 CREATE TABLE IF NOT EXISTS product_collections (
   product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,

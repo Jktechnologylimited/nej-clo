@@ -45,7 +45,7 @@ export default async function RootLayout({
       lang={locale}
       className={`${archivo.variable} ${jetbrainsMono.variable} ${inter.variable} h-full`}
     >
-      <body className="flex min-h-full flex-col bg-bg text-paper antialiased">
+      <body className="flex min-h-full flex-col bg-bg text-ink antialiased">
         <I18nProvider initialLocale={locale} initialCurrency={currency}>
           <CartProvider>
             <Header />

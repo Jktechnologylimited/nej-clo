@@ -13,6 +13,7 @@ const createSchema = z.object({
     .regex(/^data:image\//, "Expected an image data URL")
     .nullable()
     .default(null),
+  badge: z.string().max(30, "Keep the badge short").nullable().default(null),
 });
 
 async function requireAdmin() {

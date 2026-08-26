@@ -1,10 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
-
-const MAX_DIMENSION = 1200;
-const JPEG_QUALITY = 0.82;
-const MAX_DATA_URL_LENGTH = 2_000_000; // ~1.5MB of actual image data after base64 overhead
+import {
+  downscaleImage,
+  MAX_IMAGE_DATA_URL_LENGTH,
+} from "@/lib/image-downscale";
 
 export function ImageUploadField({
   label,
@@ -27,8 +27,8 @@ export function ImageUploadField({
     }
     setProcessing(true);
     try {
-      const dataUrl = await downscaleImage(file, MAX_DIMENSION, JPEG_QUALITY);
-      if (dataUrl.length > MAX_DATA_URL_LENGTH) {
+      const dataUrl = await downscaleImage(file);
+      if (dataUrl.length > MAX_IMAGE_DATA_URL_LENGTH) {
         setError("Image is too large even after compression — try a smaller photo.");
         return;
       }
@@ -42,7 +42,7 @@ export function ImageUploadField({
 
   return (
     <div>
-      <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+      <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink-muted">
         {label}
       </span>
 
@@ -57,7 +57,7 @@ export function ImageUploadField({
           <button
             type="button"
             onClick={() => onChange(null)}
-            className="absolute right-2 top-2 border border-line-strong bg-bg px-2 py-1 font-mono-data text-[10px] tracking-[0.05em] text-paper/70 transition hover:border-rust hover:text-rust"
+            className="absolute right-2 top-2 border border-line-strong bg-paper px-2 py-1 font-mono-data text-[10px] tracking-[0.05em] text-ink-muted transition hover:border-rust hover:text-rust"
           >
             REMOVE
           </button>
@@ -67,7 +67,7 @@ export function ImageUploadField({
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={processing}
-          className="w-full border border-dashed border-line-strong px-4 py-10 text-center font-mono-data text-xs tracking-[0.1em] text-paper/40 transition hover:border-amber hover:text-amber disabled:opacity-50"
+          className="w-full border border-dashed border-line-strong px-4 py-10 text-center font-mono-data text-xs tracking-[0.1em] text-ink-muted transition hover:border-ink hover:text-ink disabled:opacity-50"
         >
           {processing ? "PROCESSING…" : "CLICK TO UPLOAD IMAGE"}
         </button>
@@ -81,7 +81,7 @@ export function ImageUploadField({
         onChange={(e) => {
           const file = e.target.files?.[0];
           if (file) handleFile(file);
-          e.target.value = ""; // allow re-selecting the same file later
+          e.target.value = "";
         }}
       />
 
@@ -90,44 +90,4 @@ export function ImageUploadField({
       )}
     </div>
   );
-}
-
-function downscaleImage(
-  file: File,
-  maxDimension: number,
-  quality: number,
-): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error("Couldn't read the file."));
-    reader.onload = () => {
-      const img = new Image();
-      img.onerror = () => reject(new Error("Couldn't decode that image."));
-      img.onload = () => {
-        let { width, height } = img;
-        if (width > maxDimension || height > maxDimension) {
-          if (width > height) {
-            height = Math.round((height / width) * maxDimension);
-            width = maxDimension;
-          } else {
-            width = Math.round((width / height) * maxDimension);
-            height = maxDimension;
-          }
-        }
-
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) {
-          reject(new Error("Canvas isn't supported here."));
-          return;
-        }
-        ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL("image/jpeg", quality));
-      };
-      img.src = reader.result as string;
-    };
-    reader.readAsDataURL(file);
-  });
 }

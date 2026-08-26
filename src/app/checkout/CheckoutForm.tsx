@@ -5,9 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/components/CartProvider";
 import { useI18n } from "@/components/I18nProvider";
+import { calculateShippingCents } from "@/lib/shipping";
 
 const inputClass =
-  "w-full border border-line-strong bg-transparent px-3 py-2.5 font-mono-data text-sm text-paper placeholder:text-paper/30 focus:border-amber focus:outline-none";
+  "w-full border border-line-strong bg-transparent px-3 py-2.5 font-mono-data text-sm text-ink placeholder:text-ink/30 focus:border-amber focus:outline-none";
 
 export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) {
   const { items, subtotalCents, clear } = useCart();
@@ -15,6 +16,9 @@ export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) 
   const router = useRouter();
   const searchParams = useSearchParams();
   const paymentStatus = searchParams.get("payment");
+
+  const shippingCents = calculateShippingCents(subtotalCents);
+  const totalCents = subtotalCents + shippingCents;
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -63,12 +67,12 @@ export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) 
   if (items.length === 0) {
     return (
       <div className="mx-auto max-w-3xl px-5 py-20 text-center sm:px-8">
-        <h1 className="font-display text-2xl font-extrabold uppercase text-paper">
+        <h1 className="font-display text-2xl font-extrabold uppercase text-ink">
           {t.checkout.empty}
         </h1>
         <Link
           href="/shop"
-          className="mt-6 inline-block border border-paper px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-ink"
+          className="mt-6 inline-block border border-paper px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber hover:text-ink"
         >
           {t.hero.viewStock}
         </Link>
@@ -78,10 +82,10 @@ export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) 
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-10 sm:px-8 sm:py-14">
-      <p className="font-mono-data text-[11px] tracking-[0.2em] text-paper/40">
+      <p className="font-mono-data text-[11px] tracking-[0.2em] text-ink/40">
         {t.checkout.eyebrow}
       </p>
-      <h1 className="mt-1 font-display text-3xl font-extrabold uppercase tracking-tight text-paper">
+      <h1 className="mt-1 font-display text-3xl font-extrabold uppercase tracking-tight text-ink">
         {t.checkout.title}
       </h1>
 
@@ -100,13 +104,13 @@ export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block">
-              <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+              <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
                 {t.checkout.fullName}
               </span>
               <input name="name" required className={inputClass} />
             </label>
             <label className="block">
-              <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+              <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
                 {t.checkout.email}
               </span>
               <input type="email" name="email" required className={inputClass} />
@@ -114,14 +118,14 @@ export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) 
           </div>
 
           <label className="block">
-            <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+            <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
               {t.checkout.addressLine1}
             </span>
             <input name="addressLine1" required className={inputClass} />
           </label>
 
           <label className="block">
-            <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+            <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
               {t.checkout.addressLine2}
             </span>
             <input name="addressLine2" className={inputClass} />
@@ -129,19 +133,19 @@ export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) 
 
           <div className="grid gap-4 sm:grid-cols-3">
             <label className="block">
-              <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+              <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
                 {t.checkout.city}
               </span>
               <input name="city" required className={inputClass} />
             </label>
             <label className="block">
-              <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+              <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
                 {t.checkout.postcode}
               </span>
               <input name="postalCode" required className={inputClass} />
             </label>
             <label className="block">
-              <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+              <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
                 {t.checkout.country}
               </span>
               <input name="country" required className={inputClass} />
@@ -155,12 +159,12 @@ export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) 
           )}
 
           {currency !== "NGN" && (
-            <p className="font-mono-data text-[11px] leading-relaxed text-paper/40">
+            <p className="font-mono-data text-[11px] leading-relaxed text-ink/40">
               {t.checkout.currencyNote}
             </p>
           )}
 
-          <p className="font-mono-data text-[11px] leading-relaxed text-paper/40">
+          <p className="font-mono-data text-[11px] leading-relaxed text-ink/40">
             {paystackEnabled ? t.checkout.securePayment : t.checkout.noPayment}
           </p>
 
@@ -169,19 +173,19 @@ export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) 
             disabled={submitting}
             className="w-full border border-paper bg-paper px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber disabled:opacity-50"
           >
-            {submitting ? t.checkout.submitting : t.checkout.confirm(formatPrice(subtotalCents))}
+            {submitting ? t.checkout.submitting : t.checkout.confirm(formatPrice(totalCents))}
           </button>
         </form>
 
         <div className="h-fit border border-line-strong bg-bg-raised p-5">
-          <p className="mb-4 font-mono-data text-[11px] tracking-[0.15em] text-paper/40">
+          <p className="mb-4 font-mono-data text-[11px] tracking-[0.15em] text-ink/40">
             {t.checkout.orderSummary}
           </p>
           <div className="space-y-3">
             {items.map((item) => (
               <div
                 key={`${item.productId}-${item.size}`}
-                className="flex justify-between gap-2 font-mono-data text-xs text-paper/70"
+                className="flex justify-between gap-2 font-mono-data text-xs text-ink/70"
               >
                 <span className="min-w-0 truncate">
                   {item.name} — {item.size} × {item.quantity}
@@ -190,9 +194,19 @@ export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) 
               </div>
             ))}
           </div>
-          <div className="mt-4 flex justify-between border-t border-dashed border-line-strong pt-4 font-mono-data text-sm font-bold text-paper">
+          <div className="mt-4 space-y-2 border-t border-dashed border-line-strong pt-4 font-mono-data text-xs text-ink">
+            <div className="flex justify-between">
+              <span className="text-ink/50">{t.cart.subtotal}</span>
+              <span>{formatPrice(subtotalCents)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-ink/50">{t.cart.shipping}</span>
+              <span>{shippingCents === 0 ? t.cart.freeShipping : formatPrice(shippingCents)}</span>
+            </div>
+          </div>
+          <div className="mt-3 flex justify-between border-t border-dashed border-line-strong pt-3 font-mono-data text-sm font-bold text-ink">
             <span>{t.checkout.total}</span>
-            <span>{formatPrice(subtotalCents)}</span>
+            <span>{formatPrice(totalCents)}</span>
           </div>
         </div>
       </div>

@@ -4,16 +4,16 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Product } from "@/lib/db/types";
 import { productCategoryValues, productStatusValues } from "@/lib/db/types";
-import { ImageUploadField } from "@/components/ImageUploadField";
+import { MultiImageUploadField } from "@/components/MultiImageUploadField";
 
 const inputClass =
-  "w-full border border-line-strong bg-transparent px-3 py-2.5 font-mono-data text-sm text-paper placeholder:text-paper/30 focus:border-amber focus:outline-none";
+  "w-full border border-line-strong bg-transparent px-3 py-2.5 font-mono-data text-sm text-ink placeholder:text-ink/30 focus:border-amber focus:outline-none";
 const selectClass =
-  "w-full border border-line-strong bg-bg px-3 py-2.5 font-mono-data text-sm text-paper focus:border-amber focus:outline-none";
+  "w-full border border-line-strong bg-bg px-3 py-2.5 font-mono-data text-sm text-ink focus:border-amber focus:outline-none";
 
 export function ProductEditForm({ product }: { product: Product }) {
   const router = useRouter();
-  const [imageUrl, setImageUrl] = useState<string | null>(product.imageUrl);
+  const [imageUrls, setImageUrls] = useState<string[]>(product.imageUrls);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,7 +35,7 @@ export function ProductEditForm({ product }: { product: Product }) {
       stock: Number(form.get("stock")),
       status: form.get("status"),
       sizes: form.get("sizes"),
-      imageUrl,
+      imageUrls,
     };
 
     try {
@@ -56,17 +56,17 @@ export function ProductEditForm({ product }: { product: Product }) {
 
   return (
     <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-      <ImageUploadField label="PRODUCT PHOTO" value={imageUrl} onChange={setImageUrl} />
+      <MultiImageUploadField label="PRODUCT PHOTOS" value={imageUrls} onChange={setImageUrls} />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
             NAME
           </span>
           <input name="name" required defaultValue={product.name} className={inputClass} />
         </label>
         <label className="block">
-          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
             COLOURWAY
           </span>
           <input name="colorway" required defaultValue={product.colorway} className={inputClass} />
@@ -74,7 +74,7 @@ export function ProductEditForm({ product }: { product: Product }) {
       </div>
 
       <label className="block">
-        <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+        <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
           SLUG — /product/…
         </span>
         <input
@@ -87,7 +87,7 @@ export function ProductEditForm({ product }: { product: Product }) {
       </label>
 
       <label className="block">
-        <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+        <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
           DESCRIPTION
         </span>
         <textarea
@@ -101,7 +101,7 @@ export function ProductEditForm({ product }: { product: Product }) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
             CATEGORY
           </span>
           <select name="category" defaultValue={product.category} className={selectClass}>
@@ -113,7 +113,7 @@ export function ProductEditForm({ product }: { product: Product }) {
           </select>
         </label>
         <label className="block">
-          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
             STATUS
           </span>
           <select name="status" defaultValue={product.status} className={selectClass}>
@@ -128,13 +128,13 @@ export function ProductEditForm({ product }: { product: Product }) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
             SKU
           </span>
           <input name="sku" required defaultValue={product.sku} className={inputClass} />
         </label>
         <label className="block">
-          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
             DROP CODE
           </span>
           <input name="dropCode" required defaultValue={product.dropCode} className={inputClass} />
@@ -143,7 +143,7 @@ export function ProductEditForm({ product }: { product: Product }) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
             PRICE (₦ NAIRA)
           </span>
           <input
@@ -157,7 +157,7 @@ export function ProductEditForm({ product }: { product: Product }) {
           />
         </label>
         <label className="block">
-          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
             STOCK
           </span>
           <input
@@ -173,7 +173,7 @@ export function ProductEditForm({ product }: { product: Product }) {
       </div>
 
       <label className="block">
-        <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+        <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
           SIZES — comma-separated
         </span>
         <input

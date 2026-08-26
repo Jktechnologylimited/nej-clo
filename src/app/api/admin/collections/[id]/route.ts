@@ -16,6 +16,7 @@ const updateSchema = z.object({
     .max(2_500_000, "Image is too large")
     .regex(/^data:image\//, "Expected an image data URL")
     .nullable(),
+  badge: z.string().max(30, "Keep the badge short").nullable(),
 });
 
 async function requireAdmin() {

@@ -17,6 +17,7 @@ type CartContextValue = {
   addItem: (item: CartItem) => void;
   removeItem: (productId: string, size: string) => void;
   setQuantity: (productId: string, size: string, quantity: number) => void;
+  setSize: (productId: string, oldSize: string, newSize: string) => void;
   clear: () => void;
   count: number;
   subtotalCents: number;
@@ -89,6 +90,33 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
+  const setSize = useCallback((productId: string, oldSize: string, newSize: string) => {
+    if (oldSize === newSize) return;
+    setItems((prev) => {
+      const moving = prev.find((i) => i.productId === productId && i.size === oldSize);
+      if (!moving) return prev;
+
+      const existingAtNewSize = prev.find(
+        (i) => i.productId === productId && i.size === newSize,
+      );
+
+      if (existingAtNewSize) {
+        // Merge into the existing line at the target size, drop the old one.
+        return prev
+          .map((i) =>
+            i.productId === productId && i.size === newSize
+              ? { ...i, quantity: i.quantity + moving.quantity }
+              : i,
+          )
+          .filter((i) => !(i.productId === productId && i.size === oldSize));
+      }
+
+      return prev.map((i) =>
+        i.productId === productId && i.size === oldSize ? { ...i, size: newSize } : i,
+      );
+    });
+  }, []);
+
   const clear = useCallback(() => setItems([]), []);
 
   const count = useMemo(
@@ -102,8 +130,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ items, addItem, removeItem, setQuantity, clear, count, subtotalCents }),
-    [items, addItem, removeItem, setQuantity, clear, count, subtotalCents],
+    () => ({ items, addItem, removeItem, setQuantity, setSize, clear, count, subtotalCents }),
+    [items, addItem, removeItem, setQuantity, setSize, clear, count, subtotalCents],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

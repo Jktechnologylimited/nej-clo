@@ -31,7 +31,7 @@ export function Countdown({ target }: { target: string }) {
   const display = remaining ?? { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
   return (
-    <div className="flex gap-4 font-mono-data text-2xl font-bold tracking-tight text-paper sm:text-4xl">
+    <div className="flex gap-4 font-mono-data text-2xl font-bold tracking-tight text-ink sm:text-4xl">
       {[
         ["DAYS", display.days],
         ["HRS", display.hours],
@@ -40,7 +40,7 @@ export function Countdown({ target }: { target: string }) {
       ].map(([label, value]) => (
         <div key={label as string} className="text-center">
           <div>{pad(value as number)}</div>
-          <div className="mt-1 text-[10px] font-normal tracking-[0.2em] text-paper/40">
+          <div className="mt-1 text-[10px] font-normal tracking-[0.2em] text-ink/40">
             {label}
           </div>
         </div>

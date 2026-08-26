@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { GarmentIcon } from "./GarmentIcon";
 import { StampBadge } from "./StampBadge";
+import { QuickAddButton } from "./QuickAddButton";
 import { swatchFor } from "@/lib/colorway";
 import { formatPrice, type CurrencyCode } from "@/lib/currency";
 import type { Product } from "@/lib/db/types";
@@ -16,49 +17,56 @@ export function ProductCard({
   statusLabels: Dictionary["shop"]["filters"];
 }) {
   const soldOut = product.status === "sold_out";
+  const sizeList = product.sizes.split(",").map((s) => s.trim());
 
   return (
-    <Link
-      href={`/product/${product.slug}`}
-      className="group block border border-line-strong bg-paper text-ink transition hover:border-amber"
-    >
-      <div className="flex items-center justify-between border-b border-dashed border-ink/30 px-3 py-2 font-mono-data text-[10px] tracking-[0.1em] text-ink-muted">
-        <span>{product.dropCode}</span>
-        <span>{product.sku}</span>
-      </div>
+    <div className="group relative border border-line-strong bg-paper text-ink transition hover:border-ink">
+      <Link href={`/product/${product.slug}`} className="block">
+        <div
+          className="relative flex aspect-[4/5] items-center justify-center overflow-hidden"
+          style={{ backgroundColor: swatchFor(product.colorway) }}
+        >
+          {product.status !== "available" && (
+            <div className="absolute left-3 top-3 z-10">
+              <StampBadge
+                status={product.status}
+                label={statusLabels[product.status as keyof typeof statusLabels]}
+              />
+            </div>
+          )}
 
-      <div
-        className="relative flex aspect-[4/5] items-center justify-center overflow-hidden"
-        style={{ backgroundColor: swatchFor(product.colorway) }}
-      >
-        {product.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element -- stored as a data: URL, next/image doesn't optimize those
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            className={`h-full w-full object-cover transition duration-300 group-hover:scale-105 ${soldOut ? "opacity-40" : ""}`}
-          />
-        ) : (
-          <GarmentIcon
-            category={product.category}
-            className={`h-24 w-24 transition duration-300 group-hover:scale-105 ${
-              product.colorway === "Bone" || product.colorway === "Amber"
-                ? "text-ink/70"
-                : "text-paper/85"
-            } ${soldOut ? "opacity-40" : ""}`}
-          />
-        )}
-        {product.status !== "available" && (
-          <div className="absolute right-3 top-3">
-            <StampBadge
-              status={product.status}
-              label={statusLabels[product.status as keyof typeof statusLabels]}
+          {product.imageUrls[0] ? (
+            // eslint-disable-next-line @next/next/no-img-element -- stored as a data: URL, next/image doesn't optimize those
+            <img
+              src={product.imageUrls[0]}
+              alt={product.name}
+              className={`h-full w-full object-cover transition duration-300 group-hover:scale-105 ${soldOut ? "opacity-40" : ""}`}
             />
-          </div>
-        )}
-      </div>
+          ) : (
+            <GarmentIcon
+              category={product.category}
+              className={`h-24 w-24 transition duration-300 group-hover:scale-105 ${
+                product.colorway === "Bone" || product.colorway === "Amber"
+                  ? "text-ink/70"
+                  : "text-paper/85"
+              } ${soldOut ? "opacity-40" : ""}`}
+            />
+          )}
+        </div>
+      </Link>
 
-      <div className="px-3 py-3">
+      {!soldOut && (
+        <QuickAddButton
+          productId={product.id}
+          slug={product.slug}
+          name={product.name}
+          colorway={product.colorway}
+          priceCents={product.priceCents}
+          sizes={product.sizes}
+        />
+      )}
+
+      <Link href={`/product/${product.slug}`} className="block px-3 py-3">
         <h3 className="font-display text-sm font-extrabold uppercase leading-tight tracking-tight">
           {product.name}
         </h3>
@@ -70,7 +78,10 @@ export function ProductCard({
             {formatPrice(product.priceCents, currency)}
           </span>
         </div>
-      </div>
-    </Link>
+        <p className="mt-1.5 truncate font-mono-data text-[10px] tracking-[0.05em] text-ink-muted/70">
+          {sizeList.join(" · ")}
+        </p>
+      </Link>
+    </div>
   );
 }

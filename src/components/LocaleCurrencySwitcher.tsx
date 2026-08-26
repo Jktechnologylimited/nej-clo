@@ -5,7 +5,7 @@ import { locales, localeLabels } from "@/lib/i18n/locales";
 import { currencies, currencyLabels } from "@/lib/currency";
 
 const selectClass =
-  "border border-line-strong bg-transparent px-2 py-1 font-mono-data text-[11px] tracking-[0.05em] text-paper/70 transition hover:border-amber hover:text-amber focus:border-amber focus:outline-none [&>option]:bg-bg [&>option]:text-paper";
+  "border border-line-strong bg-transparent px-2 py-1 font-mono-data text-[11px] tracking-[0.05em] text-ink/70 transition hover:border-ink hover:text-ink focus:border-ink focus:outline-none [&>option]:bg-paper [&>option]:text-ink";
 
 export function LocaleCurrencySwitcher({ className = "" }: { className?: string }) {
   const { locale, currency, setLocale, setCurrency } = useI18n();

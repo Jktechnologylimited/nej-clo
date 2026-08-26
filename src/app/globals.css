@@ -1,15 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --nej-bg: #0b0b0a;
-  --nej-bg-raised: #141311;
-  --nej-paper: #f0ebde;
-  --nej-ink: #17140f;
-  --nej-ink-muted: #6b6558;
-  --nej-amber: #f2c641;
-  --nej-rust: #b23a2e;
-  --nej-line: rgba(240, 235, 222, 0.14);
-  --nej-line-strong: rgba(240, 235, 222, 0.28);
+  /* Design direction: minimal, bold, streetwear, limited-drop / inventory
+     culture — cream/beige palette per the wireframe batches, no dark
+     sections anywhere on the site (a deliberate change from the earlier
+     dark-hero design). Variable names kept from the previous palette to
+     avoid touching every className in the codebase; only the values moved. */
+  --nej-bg: #f5f2ea;         /* was #0b0b0a (near-black) */
+  --nej-bg-raised: #e8e2d3;   /* was #141311 */
+  --nej-paper: #ffffff;       /* card/tile surfaces, was #f0ebde */
+  --nej-ink: #111111;         /* was #17140f */
+  --nej-ink-muted: #686868;   /* was #6b6558 */
+  --nej-amber: #c4b59a;       /* tan accent, was bright amber #f2c641 */
+  --nej-rust: #9c3b2e;        /* errors / remove actions only */
+  --nej-line: rgba(17, 17, 17, 0.1);
+  --nej-line-strong: rgba(17, 17, 17, 0.2);
 }
 
 @theme inline {
@@ -29,7 +34,7 @@
 
 body {
   background: var(--nej-bg);
-  color: var(--nej-paper);
+  color: var(--nej-ink);
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -46,11 +51,10 @@ body {
 
 .stamp {
   display: inline-block;
-  transform: rotate(-4deg);
-  border: 2px solid currentColor;
-  padding: 0.15em 0.6em;
+  border: 1.5px solid currentColor;
+  padding: 0.2em 0.65em;
   font-family: var(--font-mono-data), ui-monospace, monospace;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
 }
 
 .perforated {

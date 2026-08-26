@@ -18,10 +18,10 @@ export default async function EditCollectionPage({
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-14 sm:px-8 sm:py-20">
-      <p className="font-mono-data text-[11px] tracking-[0.2em] text-paper/40">
+      <p className="font-mono-data text-[11px] tracking-[0.2em] text-ink/40">
         ADMIN — EDIT
       </p>
-      <h1 className="mt-1 font-display text-3xl font-extrabold uppercase tracking-tight text-paper">
+      <h1 className="mt-1 font-display text-3xl font-extrabold uppercase tracking-tight text-ink">
         {collection.name}
       </h1>
 
@@ -34,6 +34,7 @@ export default async function EditCollectionPage({
           slug: collection.slug,
           productIds: currentProducts.map((p) => p.id),
           imageUrl: collection.imageUrl,
+          badge: collection.badge,
         }}
       />
     </div>

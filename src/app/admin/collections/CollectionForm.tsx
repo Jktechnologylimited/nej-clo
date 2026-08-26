@@ -6,7 +6,7 @@ import type { Product } from "@/lib/db/types";
 import { ImageUploadField } from "@/components/ImageUploadField";
 
 const inputClass =
-  "w-full border border-line-strong bg-transparent px-3 py-2.5 font-mono-data text-sm text-paper placeholder:text-paper/30 focus:border-amber focus:outline-none";
+  "w-full border border-line-strong bg-transparent px-3 py-2.5 font-mono-data text-sm text-ink placeholder:text-ink/30 focus:border-amber focus:outline-none";
 
 type Initial = {
   id: string;
@@ -15,6 +15,7 @@ type Initial = {
   slug: string;
   productIds: string[];
   imageUrl: string | null;
+  badge: string | null;
 };
 
 export function CollectionForm({
@@ -54,6 +55,7 @@ export function CollectionForm({
       ...(isEdit ? { slug: form.get("slug") } : {}),
       productIds: Array.from(selected),
       imageUrl,
+      badge: form.get("badge") || null,
     };
 
     try {
@@ -80,7 +82,7 @@ export function CollectionForm({
       <ImageUploadField label="COVER IMAGE" value={imageUrl} onChange={setImageUrl} />
 
       <label className="block">
-        <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+        <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
           NAME
         </span>
         <input
@@ -92,9 +94,24 @@ export function CollectionForm({
         />
       </label>
 
+      <label className="block">
+        <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
+          BADGE (OPTIONAL)
+        </span>
+        <input
+          name="badge"
+          defaultValue={initial?.badge ?? ""}
+          placeholder="e.g. NEW DROP, LIMITED, RESTOCK"
+          className={inputClass}
+        />
+        <span className="mt-1 block font-mono-data text-[10px] text-ink/30">
+          Short status tag shown on the collection card. Leave blank for none.
+        </span>
+      </label>
+
       {isEdit && (
         <label className="block">
-          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+          <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
             SLUG — /collections/…
           </span>
           <input
@@ -104,14 +121,14 @@ export function CollectionForm({
             defaultValue={initial?.slug}
             className={inputClass}
           />
-          <span className="mt-1 block font-mono-data text-[10px] text-paper/30">
+          <span className="mt-1 block font-mono-data text-[10px] text-ink/30">
             Lowercase letters, numbers, and hyphens only. Changing this changes the page&apos;s URL.
           </span>
         </label>
       )}
 
       <label className="block">
-        <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+        <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
           DESCRIPTION
         </span>
         <textarea
@@ -125,7 +142,7 @@ export function CollectionForm({
       </label>
 
       <div>
-        <span className="mb-2 block font-mono-data text-[11px] tracking-[0.1em] text-paper/40">
+        <span className="mb-2 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
           PRODUCTS ({selected.size} selected)
         </span>
         <div className="max-h-80 divide-y divide-line overflow-y-auto border border-line-strong">
@@ -134,9 +151,9 @@ export function CollectionForm({
               key={p.id}
               className="flex cursor-pointer items-center justify-between gap-3 px-4 py-3 transition hover:bg-bg-raised"
             >
-              <span className="font-mono-data text-xs text-paper">
+              <span className="font-mono-data text-xs text-ink">
                 {p.name} — {p.colorway}
-                <span className="ml-2 text-paper/30">{p.sku}</span>
+                <span className="ml-2 text-ink/30">{p.sku}</span>
               </span>
               <input
                 type="checkbox"

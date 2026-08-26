@@ -32,7 +32,7 @@ export type Product = {
   stock: number;
   status: ProductStatus;
   sizes: string;
-  imageUrl: string | null;
+  imageUrls: string[];
   createdAt: string;
 };
 
@@ -59,6 +59,8 @@ export type Order = {
   status: string;
   totalCents: number;
   paymentReference: string | null;
+  carrier: string | null;
+  trackingNumber: string | null;
   createdAt: string;
 };
 
@@ -78,5 +80,6 @@ export type Collection = {
   name: string;
   description: string;
   imageUrl: string | null;
+  badge: string | null;
   createdAt: string;
 };

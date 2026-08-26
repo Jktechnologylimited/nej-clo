@@ -6,10 +6,23 @@ async function migrate() {
   const schemaPath = join(process.cwd(), "src/lib/db/schema.sql");
   const schemaSql = readFileSync(schemaPath, "utf-8");
 
-  // Naive split on ";" is safe here because schema.sql only ever contains
-  // plain DDL (CREATE TABLE / CREATE INDEX) — no string literals or
-  // procedural blocks that could contain a semicolon of their own.
-  const statements = schemaSql
+  // Strip "-- ..." line comments before splitting on ";". This matters
+  // because a comment is free-form English prose, not SQL, and can contain
+  // a semicolon as ordinary punctuation (e.g. "...above; existing images
+  // are migrated..." once did) — splitting on the raw text would cut a
+  // statement in half at that point. Comments are for readers only, so
+  // dropping them entirely before parsing statement boundaries is safe.
+  // (This assumes no string literal in the file contains "--" itself, which
+  // holds for a plain-DDL schema file like this one but wouldn't in general.)
+  const withoutComments = schemaSql
+    .split("\n")
+    .map((line) => {
+      const idx = line.indexOf("--");
+      return idx === -1 ? line : line.slice(0, idx);
+    })
+    .join("\n");
+
+  const statements = withoutComments
     .split(";")
     .map((s) => s.trim())
     .filter(Boolean);

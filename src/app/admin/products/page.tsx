@@ -7,10 +7,10 @@ export default async function AdminProductsPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
-      <p className="font-mono-data text-[11px] tracking-[0.2em] text-paper/40">
+      <p className="font-mono-data text-[11px] tracking-[0.2em] text-ink/40">
         ADMIN
       </p>
-      <h1 className="mt-1 font-display text-3xl font-extrabold uppercase tracking-tight text-paper">
+      <h1 className="mt-1 font-display text-3xl font-extrabold uppercase tracking-tight text-ink">
         Products
       </h1>
 
@@ -22,14 +22,14 @@ export default async function AdminProductsPage() {
             className="flex items-center justify-between gap-4 px-5 py-4 transition hover:bg-bg-raised"
           >
             <div className="min-w-0 flex-1">
-              <p className="truncate font-display text-sm font-bold uppercase text-paper">
-                {p.name} <span className="text-paper/40">— {p.colorway}</span>
+              <p className="truncate font-display text-sm font-bold uppercase text-ink">
+                {p.name} <span className="text-ink/40">— {p.colorway}</span>
               </p>
-              <p className="mt-1 truncate font-mono-data text-[11px] text-paper/40">
-                {p.sku} · {p.dropCode} · {p.stock} in stock · {p.status.toUpperCase()}
+              <p className="mt-1 truncate font-mono-data text-[11px] text-ink/40">
+                {p.sku} · {p.dropCode} · {p.stock} in stock · {p.status.replace("_", " ").toUpperCase()}
               </p>
             </div>
-            <p className="shrink-0 font-mono-data text-sm text-paper">
+            <p className="shrink-0 font-mono-data text-sm text-ink">
               {formatPrice(p.priceCents)}
             </p>
           </Link>

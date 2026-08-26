@@ -1,10 +1,28 @@
 import { getResendClient, EMAIL_FROM } from "./resend";
-import { welcomeEmail, orderConfirmationEmail } from "./templates";
+import { welcomeEmail, orderConfirmationEmail, restockAlertEmail } from "./templates";
 
 /**
  * All senders below are intentionally "best effort": a failed email should
  * never fail a signup or a checkout. We log and move on.
  */
+
+export async function sendRestockAlertEmail(
+  to: string,
+  params: Parameters<typeof restockAlertEmail>[0],
+) {
+  const resend = getResendClient();
+  if (!resend) return;
+  try {
+    await resend.emails.send({
+      from: EMAIL_FROM,
+      to,
+      subject: `Nej Clothing — ${params.productName} is back`,
+      html: restockAlertEmail(params),
+    });
+  } catch (err) {
+    console.error("[email] failed to send restock alert email", err);
+  }
+}
 
 export async function sendWelcomeEmail(to: string, name: string) {
   const resend = getResendClient();

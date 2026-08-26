@@ -7,6 +7,7 @@ import { getSession } from "@/lib/auth/session";
 import { sendOrderConfirmationEmail } from "@/lib/email/send";
 import { isPaystackConfigured, initializeTransaction, getPaystackCurrency } from "@/lib/paystack";
 import { convertFromBaseCents } from "@/lib/currency";
+import { calculateShippingCents } from "@/lib/shipping";
 
 const checkoutSchema = z.object({
   name: z.string().min(1),
@@ -47,10 +48,12 @@ export async function POST(request: NextRequest) {
   const data = parsed.data;
   const session = await getSession();
 
-  const totalCents = data.items.reduce(
+  const subtotalCents = data.items.reduce(
     (sum, i) => sum + i.unitPriceCents * i.quantity,
     0,
   );
+  const shippingCents = calculateShippingCents(subtotalCents);
+  const totalCents = subtotalCents + shippingCents;
   const orderNumber = generateOrderNumber();
   const orderId = randomUUID();
 
