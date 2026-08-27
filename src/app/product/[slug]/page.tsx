@@ -6,11 +6,12 @@ import { ProductGallery } from "@/components/ProductGallery";
 import { ProductTabs } from "@/components/ProductTabs";
 import { ManifestPreview } from "@/components/ManifestPreview";
 import { TrustStrip } from "@/components/TrustStrip";
-import { swatchFor } from "@/lib/colorway";
+import { effectiveSwatch } from "@/lib/colorway";
 import { formatPrice } from "@/lib/currency";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getCurrency } from "@/lib/i18n/get-currency";
 import { getDictionary } from "@/lib/i18n/dictionaries";
+import { getSiteContent } from "@/lib/site-content";
 
 export default async function ProductPage({
   params,
@@ -18,10 +19,11 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [product, locale, currency] = await Promise.all([
+  const [product, locale, currency, content] = await Promise.all([
     getProductBySlug(slug),
     getLocale(),
     getCurrency(),
+    getSiteContent(),
   ]);
   if (!product) notFound();
   const t = getDictionary(locale);
@@ -50,7 +52,7 @@ export default async function ProductPage({
           images={product.imageUrls}
           category={product.category}
           colorway={product.colorway}
-          swatchColor={swatchFor(product.colorway)}
+          swatchColor={effectiveSwatch(product)}
           productName={product.name}
           status={product.status}
           statusLabel={statusLabel}
@@ -82,7 +84,7 @@ export default async function ProductPage({
               <div className="flex gap-2">
                 <span
                   className="h-8 w-8 border-2 border-ink"
-                  style={{ backgroundColor: swatchFor(product.colorway) }}
+                  style={{ backgroundColor: effectiveSwatch(product) }}
                   title={product.colorway}
                 />
                 {siblings.map((sib) => (
@@ -90,7 +92,7 @@ export default async function ProductPage({
                     key={sib.id}
                     href={`/product/${sib.slug}`}
                     className="h-8 w-8 border border-line-strong transition hover:border-ink"
-                    style={{ backgroundColor: swatchFor(sib.colorway) }}
+                    style={{ backgroundColor: effectiveSwatch(sib) }}
                     title={sib.colorway}
                   />
                 ))}
@@ -162,7 +164,7 @@ export default async function ProductPage({
         />
       </div>
 
-      <TrustStrip t={t} />
+      <TrustStrip t={t} content={content} />
     </div>
   );
 }

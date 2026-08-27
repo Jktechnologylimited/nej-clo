@@ -8,7 +8,7 @@ const COLLECTION_COLUMNS = `id, slug, name, description, image_url AS "imageUrl"
 const PRODUCT_COLUMNS = `
   p.id, p.slug, p.name, p.category, p.description, p.colorway, p.sku,
   p.drop_code AS "dropCode", p.price_cents AS "priceCents", p.stock, p.status,
-  p.sizes, p.image_urls AS "imageUrls", p.created_at AS "createdAt"
+  p.sizes, p.image_urls AS "imageUrls", p.swatch_hex AS "swatchHex", p.created_at AS "createdAt"
 `;
 
 export async function getAllCollections(): Promise<Collection[]> {

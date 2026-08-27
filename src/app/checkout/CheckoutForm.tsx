@@ -17,7 +17,8 @@ export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) 
   const searchParams = useSearchParams();
   const paymentStatus = searchParams.get("payment");
 
-  const shippingCents = calculateShippingCents(subtotalCents);
+  const [city, setCity] = useState("");
+  const shippingCents = calculateShippingCents(subtotalCents, city);
   const totalCents = subtotalCents + shippingCents;
 
   const [submitting, setSubmitting] = useState(false);
@@ -72,7 +73,7 @@ export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) 
         </h1>
         <Link
           href="/shop"
-          className="mt-6 inline-block border border-paper px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber hover:text-ink"
+          className="mt-6 inline-block border border-paper px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber hover:text-bg"
         >
           {t.hero.viewStock}
         </Link>
@@ -136,7 +137,16 @@ export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) 
               <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
                 {t.checkout.city}
               </span>
-              <input name="city" required className={inputClass} />
+              <input
+                name="city"
+                required
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className={inputClass}
+              />
+              <span className="mt-1.5 block font-mono-data text-[10px] text-ink/40">
+                {t.cart.calabarFreeShippingNote}
+              </span>
             </label>
             <label className="block">
               <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
@@ -171,7 +181,7 @@ export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) 
           <button
             type="submit"
             disabled={submitting}
-            className="w-full border border-paper bg-paper px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber disabled:opacity-50"
+            className="w-full border border-paper bg-paper px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber hover:text-bg disabled:opacity-50"
           >
             {submitting ? t.checkout.submitting : t.checkout.confirm(formatPrice(totalCents))}
           </button>

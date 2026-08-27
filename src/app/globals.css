@@ -1,20 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  /* Design direction: minimal, bold, streetwear, limited-drop / inventory
-     culture — cream/beige palette per the wireframe batches, no dark
-     sections anywhere on the site (a deliberate change from the earlier
-     dark-hero design). Variable names kept from the previous palette to
-     avoid touching every className in the codebase; only the values moved. */
-  --nej-bg: #f5f2ea;         /* was #0b0b0a (near-black) */
-  --nej-bg-raised: #e8e2d3;   /* was #141311 */
-  --nej-paper: #ffffff;       /* card/tile surfaces, was #f0ebde */
-  --nej-ink: #111111;         /* was #17140f */
-  --nej-ink-muted: #686868;   /* was #6b6558 */
-  --nej-amber: #c4b59a;       /* tan accent, was bright amber #f2c641 */
-  --nej-rust: #9c3b2e;        /* errors / remove actions only */
-  --nej-line: rgba(17, 17, 17, 0.1);
-  --nej-line-strong: rgba(17, 17, 17, 0.2);
+  /* Black theme — dark page throughout, matching the brand logo (white
+     wordmark on black). Semantic variable names are unchanged from the
+     earlier light palette (ink/paper/bg/etc.) so no component classNames
+     needed to change — only what each token points to. "ink" now means
+     "primary readable text" (light), "paper" now means "card/tile surface"
+     (dark, subtly lifted off bg). Amber is tuned to a medium-dark gold
+     specifically so it reads well both as accent TEXT on the dark page and
+     as a button/badge BACKGROUND with light "ink" text on top of it. */
+  --nej-bg: #0b0b0a;
+  --nej-bg-raised: #17140f;
+  --nej-paper: #1c1917;
+  --nej-ink: #f2ede1;
+  --nej-ink-muted: #9a9488;
+  --nej-amber: #c9971f;
+  --nej-rust: #e2604a;
+  --nej-line: rgba(242, 237, 225, 0.12);
+  --nej-line-strong: rgba(242, 237, 225, 0.24);
 }
 
 @theme inline {

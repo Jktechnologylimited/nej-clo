@@ -54,7 +54,7 @@ export function NewsletterForm({
       <button
         type="submit"
         disabled={state === "loading"}
-        className="shrink-0 border border-l-0 border-ink bg-ink px-5 py-2.5 font-mono-data text-xs tracking-[0.1em] text-paper transition hover:bg-amber hover:text-ink disabled:opacity-50"
+        className="shrink-0 border border-l-0 border-ink bg-ink px-5 py-2.5 font-mono-data text-xs tracking-[0.1em] text-paper transition hover:bg-amber hover:text-bg disabled:opacity-50"
       >
         {state === "loading" ? "…" : buttonLabel}
       </button>

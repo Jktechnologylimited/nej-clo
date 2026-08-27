@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyTransaction, getPaystackCurrency } from "@/lib/paystack";
 import { convertFromBaseCents } from "@/lib/currency";
 import { getOrderByNumber, markOrderPaid, markOrderFailed } from "@/lib/orders";
-import { sendOrderConfirmationEmail } from "@/lib/email/send";
+import { sendOrderConfirmationEmail, sendNewOrderAdminNotification } from "@/lib/email/send";
 
 export async function GET(request: NextRequest) {
   // Paystack appends the reference as either `reference` or `trxref`.
@@ -50,6 +50,26 @@ export async function GET(request: NextRequest) {
         unitPriceCents: i.unitPriceCents,
       })),
       totalCents: order.totalCents,
+    });
+
+    await sendNewOrderAdminNotification({
+      orderNumber: order.orderNumber,
+      customerName: order.name,
+      customerEmail: order.email,
+      addressLine1: order.addressLine1,
+      addressLine2: order.addressLine2,
+      city: order.city,
+      postalCode: order.postalCode,
+      country: order.country,
+      items: items.map((i) => ({
+        productName: i.productName,
+        size: i.size,
+        quantity: i.quantity,
+        unitPriceCents: i.unitPriceCents,
+      })),
+      totalCents: order.totalCents,
+      paid: true,
+      adminOrderUrl: new URL(`/admin/orders/${order.id}/edit`, request.url).toString(),
     });
 
     return NextResponse.redirect(

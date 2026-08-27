@@ -28,11 +28,9 @@ export async function Header() {
             accountLabel={session ? t.nav.account : t.nav.login}
             accountHref={session ? "/account" : "/account/login"}
           />
-          <Link
-            href="/"
-            className="font-display text-2xl font-black tracking-tight text-ink"
-          >
-            NEJ
+          <Link href="/" className="flex items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element -- small static brand asset, next/image config not worth it here */}
+            <img src="/logo.png" alt="NEJ" className="h-6 w-auto sm:h-7" />
           </Link>
         </div>
 

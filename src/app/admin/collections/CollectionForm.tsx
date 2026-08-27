@@ -175,7 +175,7 @@ export function CollectionForm({
       <button
         type="submit"
         disabled={submitting}
-        className="w-full border border-paper bg-paper px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber disabled:opacity-50"
+        className="w-full border border-paper bg-paper px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber hover:text-bg disabled:opacity-50"
       >
         {submitting ? "SAVING…" : isEdit ? "SAVE CHANGES" : "CREATE COLLECTION"}
       </button>

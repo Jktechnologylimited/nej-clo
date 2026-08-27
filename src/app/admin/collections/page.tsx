@@ -21,7 +21,7 @@ export default async function AdminCollectionsPage() {
         </div>
         <Link
           href="/admin/collections/new"
-          className="border border-paper bg-paper px-5 py-2.5 font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber"
+          className="border border-paper bg-paper px-5 py-2.5 font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber hover:text-bg"
         >
           + NEW COLLECTION
         </Link>

@@ -27,6 +27,13 @@ export default async function AdminOrdersPage() {
               <div className="min-w-0 flex-1">
                 <p className="truncate font-mono-data text-xs text-ink">
                   {o.orderNumber} <span className="text-ink-muted">— {o.name}</span>
+                  <span
+                    className={`ml-2 border px-1.5 py-0.5 text-[9px] tracking-[0.1em] ${
+                      o.userId ? "border-amber text-amber" : "border-line-strong text-ink-muted"
+                    }`}
+                  >
+                    {o.userId ? "ACCOUNT" : "GUEST"}
+                  </span>
                 </p>
                 <p className="mt-1 truncate font-mono-data text-[11px] text-ink-muted">
                   {new Date(o.createdAt).toLocaleDateString("en-GB", {

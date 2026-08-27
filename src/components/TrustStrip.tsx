@@ -1,4 +1,5 @@
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import type { SiteContentMap } from "@/lib/site-content";
 
 const ICONS = {
   box: (
@@ -30,12 +31,12 @@ const ICONS = {
   ),
 };
 
-export function TrustStrip({ t }: { t: Dictionary }) {
+export function TrustStrip({ t, content }: { t: Dictionary; content?: SiteContentMap }) {
   const items: [keyof typeof ICONS, string, string][] = [
-    ["box", t.home.trustLimitedRunsTitle, t.home.trustLimitedRunsBody],
-    ["lock", t.home.trustNoRestocksTitle, t.home.trustNoRestocksBody],
-    ["shield", t.home.trustSecureTitle, t.home.trustSecureBody],
-    ["truck", t.home.trustFastTitle, t.home.trustFastBody],
+    ["box", content?.trust_1_title || t.home.trustLimitedRunsTitle, content?.trust_1_body || t.home.trustLimitedRunsBody],
+    ["lock", content?.trust_2_title || t.home.trustNoRestocksTitle, content?.trust_2_body || t.home.trustNoRestocksBody],
+    ["shield", content?.trust_3_title || t.home.trustSecureTitle, content?.trust_3_body || t.home.trustSecureBody],
+    ["truck", content?.trust_4_title || t.home.trustFastTitle, content?.trust_4_body || t.home.trustFastBody],
   ];
 
   return (

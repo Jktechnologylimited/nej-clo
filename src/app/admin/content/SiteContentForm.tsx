@@ -22,6 +22,12 @@ const FIELD_GROUPS: { heading: string; keys: string[]; multiline?: boolean }[] =
     keys: ["manifesto_3_title", "manifesto_3_body"],
   },
   { heading: "FOOTER", keys: ["footer_desc"], multiline: true },
+  {
+    heading: "TRUST STRIP — shown on Home, Product, and Cart",
+    keys: ["trust_1_title", "trust_1_body", "trust_2_title", "trust_2_body", "trust_3_title", "trust_3_body", "trust_4_title", "trust_4_body"],
+  },
+  { heading: "ABOUT PAGE", keys: ["about_hero_lede", "about_story_paragraph_1", "about_story_paragraph_2"], multiline: true },
+  { heading: "HELP PAGE", keys: ["help_support_email"] },
 ];
 
 const FIELD_LABELS: Record<string, string> = {
@@ -33,6 +39,18 @@ const FIELD_LABELS: Record<string, string> = {
   manifesto_3_title: "Title",
   manifesto_3_body: "Body",
   footer_desc: "Description",
+  trust_1_title: "Item 1 — title",
+  trust_1_body: "Item 1 — body",
+  trust_2_title: "Item 2 — title",
+  trust_2_body: "Item 2 — body",
+  trust_3_title: "Item 3 — title",
+  trust_3_body: "Item 3 — body",
+  trust_4_title: "Item 4 — title",
+  trust_4_body: "Item 4 — body",
+  about_hero_lede: "Intro paragraph",
+  about_story_paragraph_1: "Story — paragraph 1",
+  about_story_paragraph_2: "Story — paragraph 2",
+  help_support_email: "Support email — shown on the Help page and used for the returns/exchanges instructions",
 };
 
 export function SiteContentForm({
@@ -134,7 +152,7 @@ export function SiteContentForm({
         <button
           type="submit"
           disabled={submitting}
-          className="flex-1 border border-paper bg-paper px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber disabled:opacity-50"
+          className="flex-1 border border-paper bg-paper px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber hover:text-bg disabled:opacity-50"
         >
           {submitting ? "SAVING…" : "SAVE CHANGES"}
         </button>

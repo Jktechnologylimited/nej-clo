@@ -56,7 +56,8 @@ export function MobileMenu({
         }`}
       >
         <div className="flex items-center justify-between">
-          <span className="font-display text-xl font-black text-ink">NEJ</span>
+          {/* eslint-disable-next-line @next/next/no-img-element -- small static brand asset */}
+          <img src="/logo.png" alt="NEJ" className="h-6 w-auto" />
           <button
             type="button"
             onClick={() => setOpen(false)}

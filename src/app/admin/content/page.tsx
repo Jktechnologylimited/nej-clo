@@ -18,11 +18,12 @@ export default async function AdminContentPage() {
         Site content
       </h1>
       <p className="mt-3 max-w-lg text-sm leading-relaxed text-ink/50">
-        Edit the hero lede, the three manifesto blurbs, and the footer
-        description shown on the site. Leaving a field blank falls back to
-        the default copy below. This only covers these blocks — navigation,
-        buttons, and other fixed UI text still come from the translated
-        dictionaries, and product details are edited from{" "}
+        Edit the hero lede, the three manifesto blurbs, the footer
+        description, the About page intro/story, and the support email shown
+        on the Help page. Leaving a field blank falls back to the default
+        copy below. This only covers these blocks — navigation, buttons, and
+        other fixed UI text still come from the translated dictionaries, and
+        product details are edited from{" "}
         <a href="/admin/collections" className="text-amber hover:underline">
           Collections
         </a>

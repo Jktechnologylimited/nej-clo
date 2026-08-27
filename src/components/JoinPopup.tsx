@@ -107,7 +107,7 @@ export function JoinPopup() {
             <button
               type="submit"
               disabled={state === "loading"}
-              className="w-full border border-paper bg-paper px-4 py-3 font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber disabled:opacity-50"
+              className="w-full border border-paper bg-paper px-4 py-3 font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber hover:text-bg disabled:opacity-50"
             >
               {state === "loading" ? "…" : t.popup.join}
             </button>

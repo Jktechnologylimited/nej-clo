@@ -45,6 +45,36 @@ export default async function AdminHome() {
         </Link>
 
         <Link
+          href="/admin/customers"
+          className="border border-line-strong bg-bg-raised p-6 transition hover:border-amber"
+        >
+          <p className="font-mono-data text-[11px] tracking-[0.15em] text-ink/40">
+            VIEW
+          </p>
+          <h2 className="mt-2 font-display text-xl font-extrabold uppercase text-ink">
+            Customers
+          </h2>
+          <p className="mt-2 text-sm text-ink/50">
+            Everyone who&apos;s created an account, with their order count.
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/subscribers"
+          className="border border-line-strong bg-bg-raised p-6 transition hover:border-amber"
+        >
+          <p className="font-mono-data text-[11px] tracking-[0.15em] text-ink/40">
+            VIEW
+          </p>
+          <h2 className="mt-2 font-display text-xl font-extrabold uppercase text-ink">
+            Subscribers
+          </h2>
+          <p className="mt-2 text-sm text-ink/50">
+            Everyone signed up for drop alerts and newsletter emails.
+          </p>
+        </Link>
+
+        <Link
           href="/admin/collections"
           className="border border-line-strong bg-bg-raised p-6 transition hover:border-amber"
         >

@@ -96,7 +96,7 @@ export function OrderFulfillmentForm({ order }: { order: Order }) {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full border border-ink bg-ink px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-ink disabled:opacity-50"
+        className="w-full border border-ink bg-ink px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-bg disabled:opacity-50"
       >
         {submitting ? "SAVING…" : "SAVE FULFILLMENT"}
       </button>

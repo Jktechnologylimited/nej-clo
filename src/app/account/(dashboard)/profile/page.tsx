@@ -1,11 +1,23 @@
-import { ComingSoon } from "@/components/ComingSoon";
+import { getSession } from "@/lib/auth/session";
+import { ProfileForm } from "./ProfileForm";
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+  const session = await getSession();
+  if (!session) return null;
+
   return (
-    <ComingSoon
-      eyebrow="PROFILE"
-      title="Profile editing coming soon"
-      body="Updating your name and email from here is on the way. For now, reach out if anything on your account needs to change."
-    />
+    <div>
+      <p className="font-mono-data text-[11px] tracking-[0.2em] text-ink-muted">PROFILE</p>
+      <h1 className="mt-1 font-display text-2xl font-black uppercase tracking-tight text-ink sm:text-3xl">
+        Your details
+      </h1>
+      <p className="mt-2 max-w-md font-body text-sm text-ink-muted">
+        Update the name and email on your account.
+      </p>
+
+      <div className="mt-8">
+        <ProfileForm name={session.name} email={session.email} />
+      </div>
+    </div>
   );
 }

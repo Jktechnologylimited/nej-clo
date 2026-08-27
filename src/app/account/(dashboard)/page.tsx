@@ -84,7 +84,7 @@ export default async function AccountDashboardPage() {
             <p className="font-mono-data text-xs text-ink-muted">{t.account.nothingOnFile}</p>
             <Link
               href="/shop"
-              className="mt-4 inline-block border border-ink bg-ink px-5 py-2.5 font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-ink"
+              className="mt-4 inline-block border border-ink bg-ink px-5 py-2.5 font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-bg"
             >
               {t.hero.viewStock}
             </Link>
@@ -146,7 +146,7 @@ export default async function AccountDashboardPage() {
         </div>
         <Link
           href="/shop"
-          className="shrink-0 border border-ink bg-ink px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-ink"
+          className="shrink-0 border border-ink bg-ink px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-bg"
         >
           {t.account.shopNewStock}
         </Link>

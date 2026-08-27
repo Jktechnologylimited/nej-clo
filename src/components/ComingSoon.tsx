@@ -22,7 +22,7 @@ export function ComingSoon({
       </p>
       <Link
         href="/shop"
-        className="mt-8 inline-block border border-ink bg-ink px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-ink"
+        className="mt-8 inline-block border border-ink bg-ink px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-bg"
       >
         VIEW STOCK
       </Link>

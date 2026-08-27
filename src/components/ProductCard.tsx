@@ -2,7 +2,7 @@ import Link from "next/link";
 import { GarmentIcon } from "./GarmentIcon";
 import { StampBadge } from "./StampBadge";
 import { QuickAddButton } from "./QuickAddButton";
-import { swatchFor } from "@/lib/colorway";
+import { effectiveSwatch } from "@/lib/colorway";
 import { formatPrice, type CurrencyCode } from "@/lib/currency";
 import type { Product } from "@/lib/db/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
@@ -24,7 +24,7 @@ export function ProductCard({
       <Link href={`/product/${product.slug}`} className="block">
         <div
           className="relative flex aspect-[4/5] items-center justify-center overflow-hidden"
-          style={{ backgroundColor: swatchFor(product.colorway) }}
+          style={{ backgroundColor: effectiveSwatch(product) }}
         >
           {product.status !== "available" && (
             <div className="absolute left-3 top-3 z-10">
@@ -36,12 +36,25 @@ export function ProductCard({
           )}
 
           {product.imageUrls[0] ? (
-            // eslint-disable-next-line @next/next/no-img-element -- stored as a data: URL, next/image doesn't optimize those
-            <img
-              src={product.imageUrls[0]}
-              alt={product.name}
-              className={`h-full w-full object-cover transition duration-300 group-hover:scale-105 ${soldOut ? "opacity-40" : ""}`}
-            />
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element -- stored as a data: URL, next/image doesn't optimize those */}
+              <img
+                src={product.imageUrls[0]}
+                alt={product.name}
+                className={`h-full w-full object-cover transition duration-300 ${
+                  product.imageUrls.length < 2 ? "group-hover:scale-105" : ""
+                } ${soldOut ? "opacity-40" : ""}`}
+              />
+              {product.imageUrls[1] && (
+                // eslint-disable-next-line @next/next/no-img-element -- stored as a data: URL, next/image doesn't optimize those
+                <img
+                  src={product.imageUrls[1]}
+                  alt=""
+                  aria-hidden="true"
+                  className={`absolute inset-0 h-full w-full translate-x-full object-cover transition-transform duration-300 ease-out group-hover:translate-x-0 ${soldOut ? "opacity-40" : ""}`}
+                />
+              )}
+            </>
           ) : (
             <GarmentIcon
               category={product.category}

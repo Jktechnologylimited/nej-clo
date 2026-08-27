@@ -4,7 +4,7 @@ import type { Product } from "@/lib/db/types";
 const PRODUCT_COLUMNS = `
   id, slug, name, category, description, colorway, sku,
   drop_code AS "dropCode", price_cents AS "priceCents", stock, status, sizes,
-  image_urls AS "imageUrls", created_at AS "createdAt"
+  image_urls AS "imageUrls", swatch_hex AS "swatchHex", created_at AS "createdAt"
 `;
 
 export async function getAllProducts(): Promise<Product[]> {
@@ -68,6 +68,7 @@ export async function updateProduct(
     status: string;
     sizes: string;
     imageUrls: string[];
+    swatchHex: string | null;
   },
 ): Promise<Product | null> {
   await sql`
@@ -84,7 +85,8 @@ export async function updateProduct(
       stock = ${input.stock},
       status = ${input.status},
       sizes = ${input.sizes},
-      image_urls = ${input.imageUrls}
+      image_urls = ${input.imageUrls},
+      swatch_hex = ${input.swatchHex}
     WHERE id = ${id}
   `;
   return getProductById(id);

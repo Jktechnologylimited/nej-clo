@@ -30,6 +30,9 @@ const updateSchema = z.object({
         .regex(/^data:image\//, "Expected an image data URL"),
     )
     .max(6, "Up to 6 photos per product"),
+  swatchHex: z
+    .string()
+    .regex(/^#[0-9a-fA-F]{6}$/, "Swatch color must be a hex code like #17140f"),
 });
 
 async function requireAdmin() {

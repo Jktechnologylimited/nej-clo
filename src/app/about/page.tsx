@@ -2,6 +2,7 @@ import Link from "next/link";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionaries";
+import { getSiteContent } from "@/lib/site-content";
 
 export const metadata = { title: "About — Nej Clothing" };
 
@@ -67,8 +68,16 @@ const ICONS = {
 };
 
 export default async function AboutPage() {
-  const locale = await getLocale();
+  const [locale, content] = await Promise.all([getLocale(), getSiteContent()]);
   const t = getDictionary(locale);
+
+  const heroLede =
+    content.about_hero_lede ||
+    "NEJ is an independent streetwear label built on purpose, culture, and craftsmanship. We create in limited runs so every piece carries meaning, not mass.";
+  const storyParagraph1 =
+    content.about_story_paragraph_1 ||
+    "NEJ was born from the idea that clothing can be more than what you wear — it can be what you stand for. From the streets to the world, we represent a new era of streetwear rooted in authenticity, self-expression, and community.";
+  const storyParagraph2 = content.about_story_paragraph_2 || "This is NEJ. This is for the culture.";
 
   const values = [
     { icon: "target" as const, title: "Purpose", body: "We create with intention. Every drop has a reason." },
@@ -99,14 +108,12 @@ export default async function AboutPage() {
                 <br />A movement.
               </h1>
               <p className="mt-5 max-w-md font-body text-sm leading-relaxed text-ink-muted">
-                NEJ is an independent streetwear label built on purpose, culture, and
-                craftsmanship. We create in limited runs so every piece carries meaning,
-                not mass.
+                {heroLede}
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <a
                   href="#manifest"
-                  className="border border-ink bg-ink px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-ink"
+                  className="border border-ink bg-ink px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-bg"
                 >
                   {t.about.ourStoryCta}
                 </a>
@@ -154,12 +161,8 @@ export default async function AboutPage() {
             {t.about.storyHeading}
           </h2>
           <div className="mt-4 max-w-2xl space-y-4 font-body text-sm leading-relaxed text-ink-muted">
-            <p>
-              NEJ was born from the idea that clothing can be more than what you wear —
-              it can be what you stand for. From the streets to the world, we represent a
-              new era of streetwear rooted in authenticity, self-expression, and community.
-            </p>
-            <p>This is NEJ. This is for the culture.</p>
+            <p>{storyParagraph1}</p>
+            <p>{storyParagraph2}</p>
           </div>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-3">

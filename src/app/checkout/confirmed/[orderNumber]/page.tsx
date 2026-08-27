@@ -148,7 +148,7 @@ export default async function OrderConfirmedPage({
             </div>
             <Link
               href={`/account/orders/${order.orderNumber}/track`}
-              className="w-full shrink-0 border border-ink bg-ink px-6 py-3 text-center font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-ink sm:w-auto"
+              className="w-full shrink-0 border border-ink bg-ink px-6 py-3 text-center font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-bg sm:w-auto"
             >
               {t.checkout.trackOrder}
             </Link>

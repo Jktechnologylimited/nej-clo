@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Product } from "@/lib/db/types";
 import { productCategoryValues, productStatusValues } from "@/lib/db/types";
 import { MultiImageUploadField } from "@/components/MultiImageUploadField";
+import { effectiveSwatch } from "@/lib/colorway";
 
 const inputClass =
   "w-full border border-line-strong bg-transparent px-3 py-2.5 font-mono-data text-sm text-ink placeholder:text-ink/30 focus:border-amber focus:outline-none";
@@ -14,6 +15,7 @@ const selectClass =
 export function ProductEditForm({ product }: { product: Product }) {
   const router = useRouter();
   const [imageUrls, setImageUrls] = useState<string[]>(product.imageUrls);
+  const [swatchHex, setSwatchHex] = useState<string>(effectiveSwatch(product));
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,6 +38,7 @@ export function ProductEditForm({ product }: { product: Product }) {
       status: form.get("status"),
       sizes: form.get("sizes"),
       imageUrls,
+      swatchHex,
     };
 
     try {
@@ -57,6 +60,10 @@ export function ProductEditForm({ product }: { product: Product }) {
   return (
     <form onSubmit={handleSubmit} className="mt-8 space-y-5">
       <MultiImageUploadField label="PRODUCT PHOTOS" value={imageUrls} onChange={setImageUrls} />
+      <p className="-mt-3 font-mono-data text-[10px] text-ink/30">
+        First photo is the main image. Second photo (if set) slides in on hover in the
+        shop grid — use it for the back of the garment.
+      </p>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
@@ -72,6 +79,28 @@ export function ProductEditForm({ product }: { product: Product }) {
           <input name="colorway" required defaultValue={product.colorway} className={inputClass} />
         </label>
       </div>
+
+      <label className="block">
+        <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
+          SWATCH COLOR — what customers see as the color selector
+        </span>
+        <div className="flex items-center gap-3">
+          <input
+            type="color"
+            value={swatchHex}
+            onChange={(e) => setSwatchHex(e.target.value)}
+            className="h-10 w-14 shrink-0 cursor-pointer border border-line-strong bg-transparent p-1"
+          />
+          <input
+            type="text"
+            value={swatchHex}
+            onChange={(e) => setSwatchHex(e.target.value)}
+            pattern="^#[0-9a-fA-F]{6}$"
+            placeholder="#17140f"
+            className={inputClass}
+          />
+        </div>
+      </label>
 
       <label className="block">
         <span className="mb-1.5 block font-mono-data text-[11px] tracking-[0.1em] text-ink/40">
@@ -194,7 +223,7 @@ export function ProductEditForm({ product }: { product: Product }) {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full border border-paper bg-paper px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber disabled:opacity-50"
+        className="w-full border border-paper bg-paper px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber hover:text-bg disabled:opacity-50"
       >
         {submitting ? "SAVING…" : "SAVE CHANGES"}
       </button>

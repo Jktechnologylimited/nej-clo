@@ -1,10 +1,33 @@
 import { getResendClient, EMAIL_FROM } from "./resend";
-import { welcomeEmail, orderConfirmationEmail, restockAlertEmail } from "./templates";
+import { welcomeEmail, orderConfirmationEmail, restockAlertEmail, newOrderAdminNotificationEmail } from "./templates";
 
 /**
  * All senders below are intentionally "best effort": a failed email should
  * never fail a signup or a checkout. We log and move on.
  */
+
+/** Where new-order alerts go. Defaults to the same address db:seed uses for the admin login. */
+function getOrderNotificationEmail(): string | null {
+  return process.env.ORDER_NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL || null;
+}
+
+export async function sendNewOrderAdminNotification(
+  params: Parameters<typeof newOrderAdminNotificationEmail>[0],
+) {
+  const resend = getResendClient();
+  const to = getOrderNotificationEmail();
+  if (!resend || !to) return;
+  try {
+    await resend.emails.send({
+      from: EMAIL_FROM,
+      to,
+      subject: `New order ${params.orderNumber}${params.paid ? " (paid)" : ""} — ${params.customerName}`,
+      html: newOrderAdminNotificationEmail(params),
+    });
+  } catch (err) {
+    console.error("[email] failed to send admin order notification", err);
+  }
+}
 
 export async function sendRestockAlertEmail(
   to: string,

@@ -65,7 +65,7 @@ export function AddToCartForm({
               onClick={() => setSize(s)}
               className={`border px-3 py-2 font-mono-data text-xs tracking-[0.05em] transition ${
                 size === s
-                  ? "border-amber bg-amber text-ink"
+                  ? "border-amber bg-amber text-bg"
                   : "border-line-strong text-ink/70 hover:border-amber hover:text-amber"
               }`}
             >
@@ -106,7 +106,7 @@ export function AddToCartForm({
         type="button"
         onClick={handleAdd}
         disabled={!size}
-        className="mt-6 w-full border border-paper bg-paper px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber disabled:opacity-50"
+        className="mt-6 w-full border border-paper bg-paper px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber hover:text-bg disabled:opacity-50"
       >
         {added ? t.product.added : t.product.addToManifest(formatPrice(priceCents * quantity))}
       </button>

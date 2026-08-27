@@ -4,7 +4,7 @@ import { z } from "zod";
 import { sql } from "@/lib/db";
 import { generateOrderNumber } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
-import { sendOrderConfirmationEmail } from "@/lib/email/send";
+import { sendOrderConfirmationEmail, sendNewOrderAdminNotification } from "@/lib/email/send";
 import { isPaystackConfigured, initializeTransaction, getPaystackCurrency } from "@/lib/paystack";
 import { convertFromBaseCents } from "@/lib/currency";
 import { calculateShippingCents } from "@/lib/shipping";
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     (sum, i) => sum + i.unitPriceCents * i.quantity,
     0,
   );
-  const shippingCents = calculateShippingCents(subtotalCents);
+  const shippingCents = calculateShippingCents(subtotalCents, data.city);
   const totalCents = subtotalCents + shippingCents;
   const orderNumber = generateOrderNumber();
   const orderId = randomUUID();
@@ -95,6 +95,25 @@ export async function POST(request: NextRequest) {
         unitPriceCents: i.unitPriceCents,
       })),
       totalCents,
+    });
+    await sendNewOrderAdminNotification({
+      orderNumber,
+      customerName: data.name,
+      customerEmail: data.email,
+      addressLine1: data.addressLine1,
+      addressLine2: data.addressLine2 || null,
+      city: data.city,
+      postalCode: data.postalCode,
+      country: data.country,
+      items: data.items.map((i) => ({
+        productName: i.name,
+        size: i.size,
+        quantity: i.quantity,
+        unitPriceCents: i.unitPriceCents,
+      })),
+      totalCents,
+      paid: false,
+      adminOrderUrl: new URL(`/admin/orders/${orderId}/edit`, request.nextUrl.origin).toString(),
     });
     return NextResponse.json({ orderNumber });
   }

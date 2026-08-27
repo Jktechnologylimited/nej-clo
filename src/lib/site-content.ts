@@ -11,10 +11,34 @@ export const SITE_CONTENT_FIELDS = [
   { key: "manifesto_3_title", label: "Manifesto — item 3 title" },
   { key: "manifesto_3_body", label: "Manifesto — item 3 body" },
   { key: "footer_desc", label: "Footer description" },
+  { key: "trust_1_title", label: "Trust strip — item 1 title" },
+  { key: "trust_1_body", label: "Trust strip — item 1 body" },
+  { key: "trust_2_title", label: "Trust strip — item 2 title" },
+  { key: "trust_2_body", label: "Trust strip — item 2 body" },
+  { key: "trust_3_title", label: "Trust strip — item 3 title" },
+  { key: "trust_3_body", label: "Trust strip — item 3 body" },
+  { key: "trust_4_title", label: "Trust strip — item 4 title" },
+  { key: "trust_4_body", label: "Trust strip — item 4 body" },
+  { key: "about_hero_lede", label: "About page — intro paragraph" },
+  { key: "about_story_paragraph_1", label: "About page — story, paragraph 1" },
+  { key: "about_story_paragraph_2", label: "About page — story, paragraph 2" },
+  { key: "help_support_email", label: "Support email (Help page + returns instructions)" },
 ] as const;
 
 export type SiteContentKey = (typeof SITE_CONTENT_FIELDS)[number]["key"];
 export type SiteContentMap = Partial<Record<SiteContentKey, string>>;
+
+// Defaults for fields that aren't part of the translated i18n dictionaries
+// (About/Help page prose is English-only static content, same as product
+// descriptions — see the i18n notes in the README for why).
+const STATIC_DEFAULTS: Record<string, string> = {
+  about_hero_lede:
+    "NEJ is an independent streetwear label built on purpose, culture, and craftsmanship. We create in limited runs so every piece carries meaning, not mass.",
+  about_story_paragraph_1:
+    "NEJ was born from the idea that clothing can be more than what you wear — it can be what you stand for. From the streets to the world, we represent a new era of streetwear rooted in authenticity, self-expression, and community.",
+  about_story_paragraph_2: "This is NEJ. This is for the culture.",
+  help_support_email: "support@nejclothing.com",
+};
 
 /**
  * Flattens the English dictionary's defaults for the editable fields into
@@ -28,6 +52,16 @@ export function defaultSiteContent(dict: {
   hero: { lede: string };
   manifesto: { items: { title: string; body: string }[] };
   footer: { desc: string };
+  home: {
+    trustLimitedRunsTitle: string;
+    trustLimitedRunsBody: string;
+    trustNoRestocksTitle: string;
+    trustNoRestocksBody: string;
+    trustSecureTitle: string;
+    trustSecureBody: string;
+    trustFastTitle: string;
+    trustFastBody: string;
+  };
 }): Record<SiteContentKey, string> {
   return {
     hero_lede: dict.hero.lede,
@@ -38,6 +72,18 @@ export function defaultSiteContent(dict: {
     manifesto_3_title: dict.manifesto.items[2].title,
     manifesto_3_body: dict.manifesto.items[2].body,
     footer_desc: dict.footer.desc,
+    trust_1_title: dict.home.trustLimitedRunsTitle,
+    trust_1_body: dict.home.trustLimitedRunsBody,
+    trust_2_title: dict.home.trustNoRestocksTitle,
+    trust_2_body: dict.home.trustNoRestocksBody,
+    trust_3_title: dict.home.trustSecureTitle,
+    trust_3_body: dict.home.trustSecureBody,
+    trust_4_title: dict.home.trustFastTitle,
+    trust_4_body: dict.home.trustFastBody,
+    about_hero_lede: STATIC_DEFAULTS.about_hero_lede,
+    about_story_paragraph_1: STATIC_DEFAULTS.about_story_paragraph_1,
+    about_story_paragraph_2: STATIC_DEFAULTS.about_story_paragraph_2,
+    help_support_email: STATIC_DEFAULTS.help_support_email,
   };
 }
 
@@ -69,4 +115,9 @@ export async function setSiteContent(entries: SiteContentMap): Promise<void> {
 
 export async function resetSiteContent(): Promise<void> {
   await sql`DELETE FROM site_content`;
+}
+
+export async function getSupportEmail(): Promise<string> {
+  const content = await getSiteContent();
+  return content.help_support_email || STATIC_DEFAULTS.help_support_email;
 }

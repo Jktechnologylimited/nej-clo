@@ -83,6 +83,63 @@ export function orderConfirmationEmail(params: {
   );
 }
 
+export function newOrderAdminNotificationEmail(params: {
+  orderNumber: string;
+  customerName: string;
+  customerEmail: string;
+  addressLine1: string;
+  addressLine2: string | null;
+  city: string;
+  postalCode: string;
+  country: string;
+  items: { productName: string; size: string; quantity: number; unitPriceCents: number }[];
+  totalCents: number;
+  paid: boolean;
+  adminOrderUrl: string;
+}) {
+  const rows = params.items
+    .map(
+      (item) => `
+        <tr>
+          <td style="padding:6px 0;font-size:13px;">${escapeHtml(item.productName)} — ${escapeHtml(item.size)}</td>
+          <td style="padding:6px 0;font-size:13px;text-align:center;">x${item.quantity}</td>
+          <td style="padding:6px 0;font-size:13px;text-align:right;">${formatPrice(item.unitPriceCents * item.quantity)}</td>
+        </tr>
+      `,
+    )
+    .join("");
+
+  return shell(
+    params.paid ? "New order — paid" : "New order",
+    `
+      <p style="font-size:14px;line-height:1.6;margin:0 0 16px;">
+        Order <strong>${escapeHtml(params.orderNumber)}</strong> from
+        ${escapeHtml(params.customerName)} (${escapeHtml(params.customerEmail)}).
+        ${params.paid ? "Payment confirmed via Paystack." : "No payment processor connected — logged only."}
+      </p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #111111;border-bottom:1px solid #111111;margin-bottom:16px;">
+        ${rows}
+      </table>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+        <tr>
+          <td style="font-size:13px;font-weight:700;">TOTAL</td>
+          <td style="font-size:13px;font-weight:700;text-align:right;">${formatPrice(params.totalCents)}</td>
+        </tr>
+      </table>
+      <p style="font-size:12px;line-height:1.6;color:#686868;margin:0 0 20px;">
+        SHIP TO<br />
+        ${escapeHtml(params.customerName)}<br />
+        ${escapeHtml(params.addressLine1)}${params.addressLine2 ? ", " + escapeHtml(params.addressLine2) : ""}<br />
+        ${escapeHtml(params.city)}, ${escapeHtml(params.postalCode)}<br />
+        ${escapeHtml(params.country)}
+      </p>
+      <a href="${params.adminOrderUrl}" style="display:inline-block;background:#111111;color:#ffffff;padding:12px 20px;font-size:12px;letter-spacing:.1em;text-decoration:none;">
+        VIEW ORDER
+      </a>
+    `,
+  );
+}
+
 export function restockAlertEmail(params: {
   productName: string;
   colorway: string;

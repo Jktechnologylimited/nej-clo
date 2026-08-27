@@ -20,6 +20,12 @@ export default function AdminLayout({
             <Link href="/admin/orders" className="transition hover:text-amber">
               ORDERS
             </Link>
+            <Link href="/admin/customers" className="transition hover:text-amber">
+              CUSTOMERS
+            </Link>
+            <Link href="/admin/subscribers" className="transition hover:text-amber">
+              SUBSCRIBERS
+            </Link>
             <Link href="/admin/collections" className="transition hover:text-amber">
               COLLECTIONS
             </Link>

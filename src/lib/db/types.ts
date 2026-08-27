@@ -33,6 +33,7 @@ export type Product = {
   status: ProductStatus;
   sizes: string;
   imageUrls: string[];
+  swatchHex: string | null;
   createdAt: string;
 };
 

@@ -5,9 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { useI18n } from "@/components/I18nProvider";
 import { SHIPPING_FLAT_CENTS, FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping";
 
-// TODO: replace with the real support inbox before relying on this in production.
-const SUPPORT_EMAIL = "support@nejclothing.com";
-
 type TabKey = "size-guide" | "shipping" | "returns" | "care";
 
 const TOPS_CHART = [
@@ -40,7 +37,7 @@ function isTabKey(v: string | null): v is TabKey {
   return v === "size-guide" || v === "shipping" || v === "returns" || v === "care";
 }
 
-export function HelpClient() {
+export function HelpClient({ supportEmail }: { supportEmail: string }) {
   const { t, formatPrice } = useI18n();
   const searchParams = useSearchParams();
   const initialTab = searchParams.get("tab");
@@ -186,6 +183,9 @@ export function HelpClient() {
                 Flat rate: {formatPrice(SHIPPING_FLAT_CENTS)}. Free on orders over{" "}
                 {formatPrice(FREE_SHIPPING_THRESHOLD_CENTS)}.
               </p>
+              <p className="mt-1 font-mono-data text-[11px] text-ink/70">
+                Calabar residents ship free, no minimum.
+              </p>
             </div>
           </div>
         )}
@@ -205,7 +205,7 @@ export function HelpClient() {
             <div>
               <p className="font-mono-data text-xs font-bold tracking-[0.1em] text-ink">HOW IT WORKS</p>
               <p className="mt-1">
-                Email {SUPPORT_EMAIL} with your order number and we&apos;ll guide you through
+                Email {supportEmail} with your order number and we&apos;ll guide you through
                 the next steps.
               </p>
             </div>
@@ -249,8 +249,8 @@ export function HelpClient() {
         </p>
         <p className="mt-1 max-w-sm font-body text-sm text-ink-muted">{t.help.contactBody}</p>
         <a
-          href={`mailto:${SUPPORT_EMAIL}`}
-          className="mt-4 inline-block border border-ink bg-ink px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-ink"
+          href={`mailto:${supportEmail}`}
+          className="mt-4 inline-block border border-ink bg-ink px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-bg"
         >
           {t.help.contactCta}
         </a>

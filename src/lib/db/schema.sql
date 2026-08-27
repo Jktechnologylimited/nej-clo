@@ -48,6 +48,14 @@ ALTER TABLE products ADD COLUMN IF NOT EXISTS image_url TEXT;
 -- above; existing single images are migrated in, image_url itself is left
 -- in place but unused going forward rather than dropped, to stay reversible.
 ALTER TABLE products ADD COLUMN IF NOT EXISTS image_urls TEXT[] NOT NULL DEFAULT '{}';
+
+-- The actual swatch color for this product's colorway, set by admin via a
+-- color picker. Previously this was guessed from the colorway NAME via a
+-- small hardcoded lookup table — any colorway outside that original 5-name
+-- list silently fell back to generic grey, which didn't match the real
+-- product. Nullable so existing rows fall back to that legacy name-based
+-- guess (see swatchFor() in lib/colorway.ts) until re-saved with a real color.
+ALTER TABLE products ADD COLUMN IF NOT EXISTS swatch_hex TEXT;
 UPDATE products
 SET image_urls = ARRAY[image_url]
 WHERE image_url IS NOT NULL AND (image_urls IS NULL OR array_length(image_urls, 1) IS NULL);

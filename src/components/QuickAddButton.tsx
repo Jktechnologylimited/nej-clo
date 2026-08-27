@@ -46,7 +46,7 @@ export function QuickAddButton({
       onClick={handleClick}
       aria-label={t.shop.quickAdd}
       title={t.shop.quickAdd}
-      className="absolute bottom-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-ink font-mono-data text-sm text-paper shadow-sm transition hover:bg-amber hover:text-ink"
+      className="absolute bottom-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-ink font-mono-data text-sm text-paper shadow-sm transition hover:bg-amber hover:text-bg"
     >
       {added ? "✓" : "+"}
     </button>

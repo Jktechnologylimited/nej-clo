@@ -15,7 +15,8 @@ export async function Footer() {
       <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-1">
-            <div className="font-display text-xl font-black text-ink">NEJ</div>
+            {/* eslint-disable-next-line @next/next/no-img-element -- small static brand asset */}
+            <img src="/logo.png" alt="NEJ" className="h-6 w-auto" />
             <p className="mt-3 max-w-xs font-mono-data text-[11px] leading-relaxed text-ink-muted">
               {footerDesc}
             </p>

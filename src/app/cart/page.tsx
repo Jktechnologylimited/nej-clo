@@ -32,7 +32,7 @@ export default function CartPage() {
         </h1>
         <Link
           href="/shop"
-          className="mt-6 inline-block border border-ink bg-ink px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-ink"
+          className="mt-6 inline-block border border-ink bg-ink px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-bg"
         >
           {t.hero.viewStock}
         </Link>
@@ -205,7 +205,7 @@ export default function CartPage() {
               />
               <button
                 type="submit"
-                className="shrink-0 border border-l-0 border-ink bg-ink px-5 py-2.5 font-mono-data text-xs tracking-[0.1em] text-paper transition hover:bg-amber hover:text-ink"
+                className="shrink-0 border border-l-0 border-ink bg-ink px-5 py-2.5 font-mono-data text-xs tracking-[0.1em] text-paper transition hover:bg-amber hover:text-bg"
               >
                 {t.cart.promoApply}
               </button>
@@ -235,7 +235,7 @@ export default function CartPage() {
 
           <Link
             href="/checkout"
-            className="mt-5 flex w-full items-center justify-center gap-2 border border-ink bg-ink px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-ink"
+            className="mt-5 flex w-full items-center justify-center gap-2 border border-ink bg-ink px-6 py-4 text-center font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-bg"
           >
             <svg width="13" height="13" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6">
               <rect x="4.5" y="8" width="9" height="7" rx="1" />

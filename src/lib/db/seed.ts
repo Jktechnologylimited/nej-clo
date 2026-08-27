@@ -5,6 +5,7 @@ import { randomUUID } from "node:crypto";
 import { sql } from "./index";
 import { slugify } from "../utils";
 import { hashPassword } from "../auth/password";
+import { swatchFor } from "../colorway";
 import type { ProductCategory, ProductStatus } from "./types";
 
 type SeedProduct = {
@@ -158,10 +159,10 @@ async function seed() {
     await sql`
       INSERT INTO products (
         id, slug, name, category, description, colorway, sku, drop_code,
-        price_cents, stock, status, sizes
+        price_cents, stock, status, sizes, swatch_hex
       ) VALUES (
         ${id}, ${slug}, ${p.name}, ${p.category}, ${p.description}, ${p.colorway}, ${p.sku}, ${p.dropCode},
-        ${p.priceCents}, ${p.stock}, ${p.status}, ${p.sizes}
+        ${p.priceCents}, ${p.stock}, ${p.status}, ${p.sizes}, ${swatchFor(p.colorway)}
       )
     `;
     inserted.push({ id, slug, sku: p.sku });

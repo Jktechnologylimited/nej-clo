@@ -9,7 +9,7 @@ export function StampBadge({
     status === "sold_out"
       ? "bg-ink text-paper"
       : status === "restocked" || status === "limited"
-        ? "bg-amber text-ink"
+        ? "bg-amber text-bg"
         : "bg-paper text-ink";
 
   return (

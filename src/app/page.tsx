@@ -2,12 +2,14 @@ import Link from "next/link";
 import { ProductGrid } from "@/components/ProductGrid";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { TrustStrip } from "@/components/TrustStrip";
+import { Countdown } from "@/components/Countdown";
 import { getFeaturedProducts, getLatestDropCode } from "@/lib/products";
 import { getAllCollections } from "@/lib/collections";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getCurrency } from "@/lib/i18n/get-currency";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getSiteContent } from "@/lib/site-content";
+import { getNextDropDate } from "@/lib/utils";
 
 export default async function Home() {
   const [featured, dropCode, locale, currency, content, collectionList] = await Promise.all([
@@ -20,6 +22,7 @@ export default async function Home() {
   ]);
   const t = getDictionary(locale);
   const featuredCollection = collectionList[0] ?? null;
+  const nextDrop = getNextDropDate();
 
   const heroLede = content.hero_lede || t.hero.lede;
   const manifestoItems = t.manifesto.items.map((item, i) => ({
@@ -33,44 +36,45 @@ export default async function Home() {
       {/* Hero */}
       <section className="border-b border-line">
         <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
-          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+          <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-end">
             <div>
-              <p className="font-mono-data text-xs tracking-[0.2em] text-ink-muted">
-                CURRENT DROP
+              <p className="font-mono-data text-xs tracking-[0.2em] text-amber">
+                {t.hero.eyebrow(dropCode ?? "NEJ-000")}
               </p>
-              <h1 className="mt-3 break-words font-display text-4xl font-black uppercase leading-[0.95] tracking-tight text-ink sm:text-6xl lg:text-7xl">
-                STOCK_LOG_{dropCode ? dropCode.replace(/\D/g, "").padStart(3, "0") : "000"}
+              <h1 className="mt-3 font-display text-[15vw] font-black uppercase leading-[0.85] tracking-tight text-ink sm:text-8xl lg:text-9xl">
+                {t.hero.title1}
+                <br />
+                {t.hero.title2}
               </h1>
-              <p className="mt-5 max-w-md font-body text-sm leading-relaxed text-ink-muted">
+              <p className="mt-6 max-w-md font-body text-sm leading-relaxed text-ink-muted">
                 {heroLede}
               </p>
-              <div className="mt-7">
+              <div className="mt-8 flex flex-wrap gap-3">
                 <Link
                   href="/shop"
-                  className="inline-block border border-ink bg-ink px-7 py-3.5 font-mono-data text-xs tracking-[0.15em] text-paper transition hover:bg-amber hover:border-amber hover:text-ink"
+                  className="border border-paper bg-paper px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-ink transition hover:bg-amber hover:border-amber hover:text-bg"
                 >
-                  SHOP DROP
+                  {t.hero.viewStock}
+                </Link>
+                <Link
+                  href="/shop?status=limited"
+                  className="border border-line-strong px-6 py-3 font-mono-data text-xs tracking-[0.15em] text-ink transition hover:border-amber hover:text-amber"
+                >
+                  {t.hero.liveDropOnly}
                 </Link>
               </div>
-              <p className="mt-8 font-mono-data text-[11px] tracking-[0.15em] text-ink-muted">
-                LIMITED RUN &nbsp;•&nbsp; NO RESTOCKS &nbsp;•&nbsp; NEJ ONLY
-              </p>
             </div>
 
-            <div className="relative aspect-[4/3] border border-line-strong bg-bg-raised">
-              <div className="flex h-full items-center justify-center">
-                <span className="font-display text-3xl font-black tracking-tight text-ink/15">
-                  NEJ
-                </span>
+            <div className="border border-line-strong bg-bg-raised p-6">
+              <p className="font-mono-data text-[11px] tracking-[0.15em] text-ink-muted">
+                {t.hero.nextDrop}
+              </p>
+              <div className="mt-3">
+                <Countdown target={nextDrop.toISOString()} />
               </div>
-              <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-1.5">
-                {[0, 1, 2, 3].map((i) => (
-                  <span
-                    key={i}
-                    className={`h-1.5 w-1.5 rounded-full ${i === 0 ? "bg-ink" : "bg-ink/25"}`}
-                  />
-                ))}
-              </div>
+              <p className="dashed-line mt-6 pt-4 font-mono-data text-[11px] leading-relaxed text-ink-muted">
+                {t.hero.noAnnouncement}
+              </p>
             </div>
           </div>
         </div>
@@ -181,7 +185,7 @@ export default async function Home() {
 
       {/* Trust strip */}
       <section className="mx-auto max-w-6xl px-5 sm:px-8">
-        <TrustStrip t={t} />
+        <TrustStrip t={t} content={content} />
       </section>
     </div>
   );
