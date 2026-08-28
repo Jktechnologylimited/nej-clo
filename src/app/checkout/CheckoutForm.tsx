@@ -174,9 +174,24 @@ export function CheckoutForm({ paystackEnabled }: { paystackEnabled: boolean }) 
             </p>
           )}
 
-          <p className="font-mono-data text-[11px] leading-relaxed text-ink/40">
-            {paystackEnabled ? t.checkout.securePayment : t.checkout.noPayment}
-          </p>
+          {paystackEnabled ? (
+            <div className="border border-line-strong bg-bg-raised p-3">
+              <p className="flex items-center gap-2 font-mono-data text-[11px] leading-relaxed text-ink">
+                <svg width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6" className="shrink-0">
+                  <rect x="4.5" y="8" width="9" height="7" rx="1" />
+                  <path d="M6.5 8V6a2.5 2.5 0 0 1 5 0v2" />
+                </svg>
+                {t.checkout.securePayment}
+              </p>
+              <p className="mt-2 text-center font-mono-data text-[10px] tracking-[0.1em] text-ink-muted">
+                VISA &nbsp;·&nbsp; MASTERCARD &nbsp;·&nbsp; VERVE &nbsp;·&nbsp; BANK TRANSFER
+              </p>
+            </div>
+          ) : (
+            <p className="border border-rust bg-rust/10 px-3 py-2 font-mono-data text-[11px] leading-relaxed text-rust">
+              {t.checkout.noPayment}
+            </p>
+          )}
 
           <button
             type="submit"

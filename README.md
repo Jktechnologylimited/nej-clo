@@ -134,6 +134,7 @@ Checkout works two ways, depending on whether `PAYSTACK_SECRET_KEY` is set in `.
 - **Subaccount split:** if `PAYSTACK_SUBACCOUNT_CODE` is set, it's passed on every transaction so the payment splits to that subaccount per whatever percentage you've configured on it in the Paystack dashboard (Settings → Subaccounts) — the split ratio isn't set in code.
 - **Currency:** `PAYSTACK_CURRENCY` defaults to `NGN`, which is also the app's base currency (see below) — so the amount sent to Paystack is the exact price entered in the admin panel, in kobo, with **no approximation or conversion involved**. If you set `PAYSTACK_CURRENCY` to something else, that amount goes through the same approximate rate table as the currency switcher.
 - Written against Paystack's standard, stable REST API and type-checked/built cleanly, but **not exercised against a live Paystack account** from this environment — test thoroughly before going live.
+- **The admin dashboard (`/admin`) now shows live setup status** for Payments, Email, and Order Alerts, with a red warning box and direct setup instructions whenever something's off — so "is Paystack actually connected?" is answered the moment you log in, not something you have to infer from a test order. The checkout page's messaging changed the same way: customers now see either a clear "secure payment via Paystack" box with accepted payment methods listed, or a visible red warning that no payment processor is connected — not a faint note easy to miss.
 
 ## Order notifications
 
