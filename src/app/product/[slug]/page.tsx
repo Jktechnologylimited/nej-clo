@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProductBySlug, getColorwaySiblings } from "@/lib/products";
@@ -12,6 +13,13 @@ import { getLocale } from "@/lib/i18n/get-locale";
 import { getCurrency } from "@/lib/i18n/get-currency";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getSiteContent } from "@/lib/site-content";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
+  if (!product) notFound();
+  return pageMetadata(`${product.name} — ${product.colorway}`, product.description, `/product/${encodeURIComponent(product.slug)}`, `/api/og?product=${encodeURIComponent(product.slug)}`);
+}
 
 export default async function ProductPage({
   params,

@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { getBranding } from "@/lib/branding";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getSiteContent } from "@/lib/site-content";
 
 export async function Footer() {
-  const [locale, content] = await Promise.all([getLocale(), getSiteContent()]);
+  const [locale, content, branding] = await Promise.all([getLocale(), getSiteContent(), getBranding()]);
   const t = getDictionary(locale);
   const footerDesc = content.footer_desc || t.footer.desc;
 
@@ -16,7 +17,7 @@ export async function Footer() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-1">
             {/* eslint-disable-next-line @next/next/no-img-element -- small static brand asset */}
-            <img src="/logo.png" alt="NEJ" className="h-6 w-auto" />
+            <img src={branding?.logo ?? "/logo.png"} alt="NEJ" className="h-6 w-auto" />
             <p className="mt-3 max-w-xs font-mono-data text-[11px] leading-relaxed text-ink-muted">
               {footerDesc}
             </p>

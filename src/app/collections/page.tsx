@@ -1,9 +1,9 @@
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { getAllCollections, getCollectionProductCounts } from "@/lib/collections";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 
-export const metadata = { title: "Collections — Nej Clothing" };
 
 export default async function CollectionsPage() {
   const [collectionList, counts, locale] = await Promise.all([
@@ -81,3 +81,5 @@ export default async function CollectionsPage() {
     </div>
   );
 }
+
+export const metadata = pageMetadata('Collections', 'Explore curated NEJ streetwear collections and discover the latest drops.', '/collections');

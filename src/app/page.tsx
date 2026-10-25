@@ -1,3 +1,4 @@
+import { pageMetadata, SITE_DESCRIPTION } from "@/lib/seo";
 import Link from "next/link";
 import { ProductGrid } from "@/components/ProductGrid";
 import { NewsletterForm } from "@/components/NewsletterForm";
@@ -190,3 +191,5 @@ export default async function Home() {
     </div>
   );
 }
+
+export const metadata = pageMetadata("Independent Streetwear & Limited Drops", SITE_DESCRIPTION, "/");

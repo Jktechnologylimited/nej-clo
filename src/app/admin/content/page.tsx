@@ -1,11 +1,14 @@
 import { getSiteContent, defaultSiteContent } from "@/lib/site-content";
 import { getDictionary } from "@/lib/i18n/dictionaries";
+import { getBranding } from "@/lib/branding";
+import { BrandingForm } from "./BrandingForm";
 import { SiteContentForm } from "./SiteContentForm";
 
 export default async function AdminContentPage() {
-  const [overrides, dict] = await Promise.all([
+  const [overrides, dict, branding] = await Promise.all([
     getSiteContent(),
     Promise.resolve(getDictionary("en")),
+    getBranding(),
   ]);
   const defaults = defaultSiteContent(dict);
 
@@ -30,6 +33,7 @@ export default async function AdminContentPage() {
         .
       </p>
 
+      <BrandingForm initial={branding} />
       <SiteContentForm overrides={overrides} defaults={defaults} />
     </div>
   );

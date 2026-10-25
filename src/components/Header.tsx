@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getBranding } from "@/lib/branding";
 import { Ticker } from "./Ticker";
 import { CartIndicator } from "./CartIndicator";
 import { LocaleCurrencySwitcher } from "./LocaleCurrencySwitcher";
@@ -8,7 +9,7 @@ import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 
 export async function Header() {
-  const [session, locale] = await Promise.all([getSession(), getLocale()]);
+  const [session, locale, branding] = await Promise.all([getSession(), getLocale(), getBranding()]);
   const t = getDictionary(locale);
 
   const navItems = [
@@ -25,12 +26,13 @@ export async function Header() {
         <div className="flex items-center gap-3">
           <MobileMenu
             navItems={navItems}
+            logo={branding?.logo}
             accountLabel={session ? t.nav.account : t.nav.login}
             accountHref={session ? "/account" : "/account/login"}
           />
           <Link href="/" className="flex items-center">
             {/* eslint-disable-next-line @next/next/no-img-element -- small static brand asset, next/image config not worth it here */}
-            <img src="/logo.png" alt="NEJ" className="h-6 w-auto sm:h-7" />
+            <img src={branding?.logo ?? "/logo.png"} alt="NEJ" className="h-6 w-auto sm:h-7" />
           </Link>
         </div>
 

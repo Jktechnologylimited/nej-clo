@@ -6,9 +6,11 @@ import Link from "next/link";
 
 export function MobileMenu({
   navItems,
+  logo,
   accountLabel,
   accountHref,
 }: {
+  logo?: string;
   navItems: { href: string; label: string }[];
   accountLabel: string;
   accountHref: string;
@@ -57,7 +59,7 @@ export function MobileMenu({
       >
         <div className="flex items-center justify-between">
           {/* eslint-disable-next-line @next/next/no-img-element -- small static brand asset */}
-          <img src="/logo.png" alt="NEJ" className="h-6 w-auto" />
+          <img src={logo ?? "/logo.png"} alt="NEJ" className="h-6 w-auto" />
           <button
             type="button"
             onClick={() => setOpen(false)}

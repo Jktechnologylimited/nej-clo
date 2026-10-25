@@ -221,3 +221,9 @@ src/
 ## Deploying
 
 Works as-is on Vercel: connect the repo, add the same environment variables from `.env.local` in the project's settings, and deploy. Run `npm run db:migrate` (then `npm run db:seed` if it's a fresh database) against your production Neon database before or during your first deploy.
+
+## Branding and search metadata
+
+Admins can upload a PNG, JPEG, or WebP logo (up to 10 MB) under **Admin → Site content → Logo & favicon**. Uploads save automatically, update all site logos, and generate a transparent 64×64 favicon from the same image. Branding is stored in the existing `site_content` table; no migration is needed. Resetting text content preserves branding. Existing visitors see the new branding on their next page load; social networks may retain their own cached previews.
+
+Canonical URLs default to **https://www.nej.com.ng**. Set `SITE_URL` to override the public origin for another deployment. Public pages include canonical, Open Graph, and Twitter metadata; products and collections have their own descriptions and share-image URLs. `/api/og` renders 1200×630 PNG cards from the uploaded logo or stored catalog artwork. Private account, admin, cart, checkout, and search pages are marked noindex. `/sitemap.xml` lists public static pages, products, and collections; `/robots.txt` advertises it. Search metadata and branding require the configured database, like the storefront itself.

@@ -1,3 +1,5 @@
+import { privateMetadata } from "@/lib/seo";
+export const metadata = privateMetadata;
 import Link from "next/link";
 import { LogoutButton } from "@/components/LogoutButton";
 

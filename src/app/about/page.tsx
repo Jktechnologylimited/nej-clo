@@ -1,10 +1,10 @@
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getSiteContent } from "@/lib/site-content";
 
-export const metadata = { title: "About — Nej Clothing" };
 
 const ICONS = {
   target: (
@@ -215,3 +215,5 @@ export default async function AboutPage() {
     </div>
   );
 }
+
+export const metadata = pageMetadata('About NEJ', 'Discover the story, culture, and craftsmanship behind NEJ independent streetwear.', '/about');

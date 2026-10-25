@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import { ProductGrid } from "@/components/ProductGrid";
 import { getCollectionBySlug, getProductsForCollection } from "@/lib/collections";
@@ -12,7 +13,8 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const collection = await getCollectionBySlug(slug);
-  return { title: collection ? `${collection.name} — Nej Clothing` : "Collection" };
+  if (!collection) notFound();
+  return pageMetadata(collection.name, collection.description, `/collections/${encodeURIComponent(collection.slug)}`, `/api/og?collection=${encodeURIComponent(collection.slug)}`);
 }
 
 export default async function CollectionPage({

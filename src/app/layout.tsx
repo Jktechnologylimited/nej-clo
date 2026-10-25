@@ -1,3 +1,6 @@
+import { faviconUrl } from "@/lib/branding-url";
+import { SITE_NAME, SITE_DESCRIPTION, siteUrl, pageMetadata } from "@/lib/seo";
+import { getBranding } from "@/lib/branding";
 import type { Metadata } from "next";
 import { Archivo, JetBrains_Mono, Inter } from "next/font/google";
 import "./globals.css";
@@ -27,11 +30,17 @@ const inter = Inter({
   weight: ["400", "500", "600"],
 });
 
-export const metadata: Metadata = {
-  title: "Nej Clothing",
-  description:
-    "Independent streetwear label. Guerrilla releases, limited runs, no restock guaranteed.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const branding = await getBranding();
+  return {
+    ...pageMetadata("Independent Streetwear & Limited Drops", SITE_DESCRIPTION, "/"),
+    metadataBase: siteUrl(),
+    title: { default: `${SITE_NAME} | Independent Streetwear & Limited Drops`, template: `%s | ${SITE_NAME}` },
+    // Canonicals belong to individual pages, not an inherited root layout.
+    alternates: undefined,
+    icons: { icon: branding ? { url: faviconUrl(branding.favicon), type: "image/png", sizes: "64x64" } : "/default-favicon.ico" },
+  };
+}
 
 export default async function RootLayout({
   children,

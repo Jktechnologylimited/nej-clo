@@ -1,4 +1,4 @@
-export const metadata = { title: "Privacy Policy — Nej Clothing" };
+import { pageMetadata } from "@/lib/seo";
 
 export default function PrivacyPage() {
   return (
@@ -16,3 +16,5 @@ export default function PrivacyPage() {
     </div>
   );
 }
+
+export const metadata = pageMetadata('Privacy Policy', 'Read how Nej Clothing handles personal information and privacy.', '/legal/privacy');

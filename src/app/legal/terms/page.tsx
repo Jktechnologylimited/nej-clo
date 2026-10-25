@@ -1,4 +1,4 @@
-export const metadata = { title: "Terms & Conditions — Nej Clothing" };
+import { pageMetadata } from "@/lib/seo";
 
 export default function TermsPage() {
   return (
@@ -15,3 +15,5 @@ export default function TermsPage() {
     </div>
   );
 }
+
+export const metadata = pageMetadata('Terms & Conditions', 'Read the terms and conditions for shopping with Nej Clothing.', '/legal/terms');

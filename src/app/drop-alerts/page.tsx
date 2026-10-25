@@ -1,8 +1,8 @@
+import { pageMetadata } from "@/lib/seo";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 
-export const metadata = { title: "Drop Alerts — Nej Clothing" };
 
 export default async function DropAlertsPage() {
   const locale = await getLocale();
@@ -30,3 +30,5 @@ export default async function DropAlertsPage() {
     </div>
   );
 }
+
+export const metadata = pageMetadata('Drop Alerts', 'Join NEJ drop alerts to hear about new releases and limited-run streetwear.', '/drop-alerts');

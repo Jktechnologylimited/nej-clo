@@ -88,7 +88,7 @@ export function defaultSiteContent(dict: {
 }
 
 export async function getSiteContent(): Promise<SiteContentMap> {
-  const rows = (await sql`SELECT key, value FROM site_content`) as unknown as {
+  const rows = (await sql`SELECT key, value FROM site_content WHERE key <> 'site_branding'`) as unknown as {
     key: string;
     value: string;
   }[];
@@ -114,7 +114,7 @@ export async function setSiteContent(entries: SiteContentMap): Promise<void> {
 }
 
 export async function resetSiteContent(): Promise<void> {
-  await sql`DELETE FROM site_content`;
+  await sql`DELETE FROM site_content WHERE key <> 'site_branding'`;
 }
 
 export async function getSupportEmail(): Promise<string> {
